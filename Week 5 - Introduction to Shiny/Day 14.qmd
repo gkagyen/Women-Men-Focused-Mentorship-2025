@@ -134,7 +134,7 @@ shinyApp(ui = ui, server = server)
 
 -   Modify the app to allow users to change the colour of the scatter plot points.
 
-### 4. Enhancing the App with Reactive Elements (30 minutes)
+### 4. Enhancing the App with Reactive Elements 
 
 **Adding Filters and Data Tables**
 
@@ -176,9 +176,9 @@ shinyApp(ui = ui, server = server)
 
 #### **Hands-on Exercise:**
 
--   Modify the app to allow filtering by **horsepower (hp)** instead of MPG.
+-   Modify the app to allow filtering by **horsepower (`hp`)** instead of MPG.
 
-### 4. Interactive Group Activity
+### 5. Interactive Group Activity
 
 **Challenge: Create an Interactive Data Exploration Dashboard**
 
@@ -208,7 +208,7 @@ In groups of 3-5, design a **Shiny dashboard** that allows users to explore a da
 
 -   Each group will present their app and explain how it works.
 
-### **Group Activity Solution Example**
+### Group Activity Solution Example
 
 ``` r
 library(shiny) 
@@ -275,7 +275,7 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server) 
 ```
 
-### 5. Assignment
+### 6. Assignment
 
 **1. Modify the scatter plot app:**
 
@@ -293,7 +293,7 @@ shinyApp(ui = ui, server = server)
 
     -   Select a numeric variable for the histogram
 
-### 6. Assignment Solutions
+### Assignment Solutions
 
 **Solution 1: Scatter Plot with Dynamic Colour Selection**
 

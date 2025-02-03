@@ -17,7 +17,7 @@ editor: visual
 
 ## Session Outline
 
-### 1. Review of Day 7
+### 1. Review of Day 4
 
 -   Recap key data manipulation techniques with `dplyr`: `select()`, `filter()`, `mutate()`, and `arrange()`
 -   Discuss how cleaned and transformed datasets set the stage for visualization

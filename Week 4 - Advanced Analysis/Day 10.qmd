@@ -169,7 +169,7 @@ plot(forecast_values)
 
 -   Apply the Holt-Winters method to `nottem` and generate a 12-month forecast.
 
-### **6. Interactive Group Activity (30 minutes)**
+### 5. Interactive Group Activity
 
 **Group Challenge:**
 
@@ -199,7 +199,7 @@ forecast_nottem <- forecast(hw_nottem, h = 12)
 plot(forecast_nottem)
 ```
 
-### 5. Assignment
+### 6. Assignment
 
 **1. Time Series Creation**
 

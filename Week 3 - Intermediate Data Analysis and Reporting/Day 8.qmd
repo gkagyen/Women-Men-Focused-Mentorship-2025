@@ -109,7 +109,7 @@ $$y = \beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+\cdots+\beta_{n}x_{n}+\varepsilon$
 -   Fit a multiple linear regression model to predict `mpg` based on `wt`, `hp`, and `disp`.
 -   Interpret the coefficients
 
-### **4. Check Model Assumptions to Assess Models Accuracy**
+### 4. Check Model Assumptions to Assess Models Accuracy
 
 Use diagnostic plots to check assumptions (e.g., linearity, homoscedasticity):
 
@@ -229,7 +229,7 @@ ggplot(mtcars, aes(x = wt, y = hp)) +
   theme_bw()
 ```
 
-### 4. Assignment
+### 6. Assignment
 
 **1. Simple Linear Regression:**
 
@@ -242,7 +242,7 @@ ggplot(mtcars, aes(x = wt, y = hp)) +
 -   Check the significance of each predictor and interpret the results.
 -   Asses models accuracy with diagnostic plots
 
-### **Assignment Solutions**
+### Assignment Solutions
 
 **1. Simple Linear Regression:**
 
@@ -276,7 +276,7 @@ par(mfrow = c(2, 2))
 plot(model_multiple_iris)
 ```
 
-### 6. Recap and Q&A
+### 7. Recap and Q&A
 
 -   Recap key concepts: simple and multiple linear regression, interpreting coefficients, and diagnostic plots
 -   Address participant questions and challenges
