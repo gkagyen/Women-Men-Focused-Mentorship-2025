@@ -134,7 +134,7 @@ shinyApp(ui = ui, server = server)
 
 -   Modify the app to allow users to change the colour of the scatter plot points.
 
-### 4. Enhancing the App with Reactive Elements 
+### 4. Enhancing the App with Reactive Elements
 
 **Adding Filters and Data Tables**
 
