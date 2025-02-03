@@ -1,0 +1,332 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Welcome and Introduction to R
+
+### Learning Objectives
+
+-   Understand the importance of R in data analysis
+-   Install R and RStudio
+-   Navigate the RStudio interface
+-   Run basic R commands
+-   Understand and create variables in R
+-   Recognize common data types in R
+-   Perform arithmetic and logical operations
+-   Practice using basic R functions
+
+## Session Outline
+
+### 1. Welcome and Overview
+
+-   Brief introduction to R and its significance in various fields such as data science, health analytics, finance, and environmental studies
+-   Benefits of learning R for women in data-related careers
+-   Program goals and schedule
+
+### 2. Installing R and RStudio
+
+**Step 1**
+
+Visit R Project Website and download R
+
+Choose the correct version for your operating system (Windows/Mac/Linux)
+
+**Step 2**
+
+Visit RStudio Website to download RStudio Desktop
+
+Install RStudio after R installation
+
+### 3. Exploring the RStudio Interface
+
+Walk through key components:
+
+1.  **Source Pane:** Where you write and edit R scripts
+2.  **Console:** Direct command execution
+3.  **Environment/History Pane:** View variables and past commands
+4.  **Files/Plots/Packages/Help Pane:** Explore plots, manage packages, and access documentation
+
+**Hands-on Exercise:**
+
+-   Open RStudio and familiarize yourself with the interface
+-   Write a simple command in the console
+
+### 4. Running Basic R Commands
+
+Start with fundamental operations:
+
+1.  **Arithmetic Operations:**
+
+    ``` r
+    2 + 3 
+    7 * 8 
+    10 / 2 
+    ```
+
+2.  **Variable Assignment:**
+
+    ``` r
+    x <- 5   
+    y <- 10   
+    sum_xy <- x + y   
+    print(sum_xy)   
+    ```
+
+3.  **Basic Functions:**
+
+    ``` r
+    sqrt(16)   
+    mean(c(1, 2, 3, 4, 5))   
+    ```
+
+### 5. Variables in R
+
+**Definition:** Variables store data values in R.\
+**Syntax:** Use `<-` to assign values to a variable.
+
+**Examples:**
+
+1.  Assigning numeric values
+
+    ``` r
+    num_var <- 42    
+    print(num_var)   
+    ```
+
+2.  Assigning character values
+
+    ``` r
+    text_var <- "Learning R is fun!"    
+    print(text_var)   
+    ```
+
+3.  Assigning logical values (Boolean)
+
+    ``` r
+    bool_var <- TRUE    
+    print(bool_var)  
+    ```
+
+**Hands-on Exercise:**
+
+Create three variables.
+
+1.  A numeric variable representing your age
+2.  A character variable for your favourite colour
+3.  A logical variable indicating whether you love data analysis
+
+### 6. Data Types in R
+
+**Common Data Types**
+
+1.  **Numeric:** Numbers (integers, decimals)
+
+    ``` r
+    height <- 170    
+    pi_val <- 3.14   
+    ```
+
+2.  **Character:** Strings of text
+
+    ``` r
+    greeting <- "Hello, R!"   
+    ```
+
+3.  **Logical:** Boolean values (`TRUE`, `FALSE`)
+
+    ``` r
+    is_r_fun <- TRUE 
+    ```
+
+4.  **Factor:** Categorical data
+
+    ``` r
+    gender <- factor(c("Male", "Female", "Female", "Male"))
+    ```
+
+**Hands-on Exercise**
+
+-   Identify the data types of the following values
+
+    ``` r
+    typeof(3.14)    
+    typeof("Data Science")    
+    typeof(FALSE)
+    ```
+
+### 7. Arithmetic and Logical Operations
+
+**Arithmetic Operations**
+
+1.  Addition, subtraction, multiplication, division
+
+    ``` r
+    sum <- 15 + 5    
+    product <- 10 * 4    
+    division <- 20 / 4  
+    ```
+
+**Logical Operations**
+
+2.  Comparison Operators: `==`, `!=`, `>`, `<`, `>=`, `<=`
+
+    ``` r
+    5 > 3      # TRUE    
+    10 == 10  # TRUE    
+    8 != 6   # TRUE
+    ```
+
+3.  Logical Operators: `&` (AND), `|` (OR), `!` (NOT)
+
+    ``` r
+    TRUE & FALSE  # FALSE    
+    TRUE | FALSE  # TRUE    
+    !TRUE         # FALSE
+    ```
+
+**Hands-on Exercise**
+
+-   Create an expression that evaluates whether your age is greater than 18 and less than 65.
+-   Check if the sum of two numbers is equal to 100.
+
+**Solution**
+
+``` r
+# Q1 
+age <- 30 
+expression <- age > 18 & age < 65 
+print(expression)  
+
+# Q2 
+num1 <- 29 
+num2 <- 14 
+check_sum <- (num1 + num2) == 100 
+print(check_sum)
+```
+
+### 8. Basic Functions in R
+
+Common functions for immediate data exploration:
+
+1.  **Mathematical Functions**
+
+    ``` r
+    sqrt(64)       # Square root    
+    round(3.14159, 2)  # Round to two decimal places
+    ```
+
+2.  **Character Functions**
+
+    ``` r
+    nchar("Hello, R!")  # Count characters    
+    tolower("DATA")     # Convert to lowercase
+    ```
+
+3.  **Logical Functions**
+
+    ``` r
+    is.numeric(42)  # Check if value is numeric    
+    is.character("Text")  # Check if value is character
+    ```
+
+**Hands-on Exercise**
+
+-   Find the square root of 256.
+-   Convert the text "WELCOME TO R" to lower case.
+-   Check if `42.5` is numeric.
+
+### 9. Interactive Group Activity
+
+-   Break participants into small groups to explore the following tasks:
+
+1.  Assign a variable `name` to store your name and print it
+2.  Create a simple arithmetic operation using assigned variables:
+3.  Create a variable storing your favourite hobby.
+4.  Write a logical condition to check if today is a weekday.
+5.  Compute the average of a set of numbers (e.g., 10, 20, 30, 40, 50).
+
+### 10. Assignment
+
+1.  **Install Check:**\
+    Ensure that R and RStudio are properly installed. Run the command below and capture the output.
+
+2.  **Arithmetic Challenge:**\
+    Create a variable `total_cost` representing the sum of three items priced at 25, 50, and 100. Display the total.
+
+3.  **Data Exploration Practice:**\
+    Assign a vector of numbers representing temperatures for a week. Find the average temperature using `mean()`.
+
+4.  **Create Variables**\
+    Create three variables and assign the following values:
+
+    -   A number of your choice
+    -   A sentence describing what you love about data
+    -   A Boolean value indicating whether you’ve completed today’s session
+
+5.  **Arithmetic Challenge**\
+    Calculate the product of 12 and 15. Divide the result by 5 and store it in a variable called `result`.
+
+6.  **Logical Evaluation**\
+    Write an R expression to check if 50 is greater than 30 and less than 100.
+
+### Assignment Solutions
+
+1.  **Install Check:**\
+    Ensure that R and RStudio are properly installed. Run the command below and capture the output.
+
+    ``` r
+    version
+    ```
+
+2.  **Arithmetic Challenge:**\
+    Create a variable `total_cost` representing the sum of three items priced at 25, 50, and 100. Display the total.
+
+    ``` r
+    # Solution (Example)   
+    total_cost <- 25 + 50 + 100   
+    print(total_cost)  
+    ```
+
+3.  **Data Exploration Practice:**\
+    Assign a vector of numbers representing temperatures for a week. Find the average temperature using `mean()`.
+
+    ``` r
+    # Solution 
+    temperatures <- c(28, 30, 31, 29, 26, 27, 32) 
+    mean(temperatures)
+    ```
+
+4.  **Create Variables:**\
+    Create three variables and assign values:
+
+    ``` r
+    number_var <- 99    sentence_var <- "I love discovering patterns in data."     boolean_var <- TRUE    print(number_var)       # Output: 99
+    print(sentence_var)     # Output: "I love discovering patterns in data." 
+    print(boolean_var)      # Output: TRUE   
+    ```
+
+5.  **Arithmetic Challenge:**\
+    Calculate the product of 12 and 15. Divide the result by 5 and store it in a variable called `result`:
+
+    ``` r
+    product <- 12 * 15    
+    result <- product / 5    
+    print(result)  # Output: 36   
+    ```
+
+6.  **Logical Evaluation:**\
+    Write an R expression to check if 50 is greater than 30 and less than 100:
+
+    ``` r
+    check_condition <- (50 > 30) & (50 < 100)    
+    print(check_condition)  #         Output: TRUE
+    ```
+
+### 7. Recap and Q&A
+
+-   Summarize key learnings
+-   Answer participant questions
+-   Discuss tips for continued practice

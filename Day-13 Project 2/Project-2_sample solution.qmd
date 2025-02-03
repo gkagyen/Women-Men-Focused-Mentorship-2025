@@ -1,0 +1,142 @@
+---
+title: "Project 2 - Sample Solution"
+format: 
+  html:
+    toc: true
+editor: visual
+---
+
+### Dataset Preprocessing
+
+**Step 1: Load and Inspect the Data**
+
+```{r}
+library(readr)
+# Load  
+file_path <- "E:/R/Ghana R User Community/2025/Women Focused Mentorship 2025/data/student_performance2.csv"
+student_performance <- read_csv(file_path, 
+                                show_col_types = F)    
+
+# View structure  
+str(student_performance)    
+
+# Summary statistics  
+summary(student_performance)
+```
+
+**Step 2: Handle Missing Values**
+
+```{r}
+#| message: false
+#| warning: false
+library(dplyr) 
+library(tidyr)  
+library(janitor)
+
+# Check missing values  
+colSums(is.na(student_performance))    
+
+# clean the column names to suit R syntax
+std_performance_clean<- student_performance |>
+  clean_names()
+
+names(std_performance_clean)
+```
+
+**Step 3: Normalize Data (if necessary)**
+
+```{r}
+# Scale numerical columns  
+std_performance_scaled <- std_performance_clean |>   
+  select(6:8) |>    
+  scale()
+```
+
+### 3. Exploratory Data Analysis (EDA)
+
+**Step 4: Visualizing Trends**
+
+```{r}
+library(ggplot2)   
+
+# Scatter plot of Study Hours and Math Score  
+ggplot(std_performance_clean, aes(x = writing_score,
+                                  y = math_score,
+                                  colour = gender)) +      
+  geom_point() +      
+  labs(title = "Maths Scores v Writing Score",         
+       x = "Writing Scores", y = "Math Score") +      
+  theme_bw()
+```
+
+**Step 5: Correlation Analysis**
+
+```{r}
+library(GGally)    
+# Pairwise correlation plot  
+ggpairs(std_performance_clean[, c("math_score", 
+                                  "writing_score", 
+                                  "reading_score")])
+```
+
+### 4. Advanced Analysis
+
+**Option 1: PCA for Dimensionality Reduction**
+
+```{r}
+
+pca_result <- prcomp(std_performance_scaled)  
+summary(pca_result)    
+
+# Scree plot  library(ggplot2)   
+explained_variance <- pca_result$sdev^2 / sum(pca_result$sdev^2)    
+
+ggplot(data.frame(PC = 1:length(explained_variance), 
+                  Variance = explained_variance),                
+       aes(x = PC, y = Variance)) +      
+  geom_bar(stat = "identity", fill = "blue", colour = 'black') +      
+  geom_line(aes(group = 1), colour = "red", linewidth = 0.7) +      
+  labs(title = "Scree Plot for PCA",         
+       x = "Principal Components",         
+       y = "Variance Explained") +      
+  theme_bw()
+```
+
+**Option 2: Clustering (K-Means or Hierarchical)**
+
+```{r}
+# K-Means Clustering  
+set.seed(100)  
+kmeans_result <- kmeans(std_performance_scaled, centers = 2, nstart = 20)    
+
+# Add cluster labels  
+std_performance_clean <- std_performance_clean |>    
+  mutate(Cluster = as.factor(kmeans_result$cluster))    
+
+# Visualize Clusters  
+ggplot(std_performance_clean, 
+       aes(x = writing_score,                                    
+           y = math_score, colour = Cluster)) +   
+  geom_point(size = 2) +      
+  labs(title = "Clustering of Student Performance Data",         
+       x = "Writing Score", y = "Math Score") +     
+  theme_bw()
+```
+
+**Option 3: Regression Analysis**
+
+```{r}
+# Fit a regression model: Predict Math_Score based on writing score and reading score 
+model <- lm(math_score ~ reading_score + writing_score,
+            data = std_performance_clean)  
+summary(model)    
+
+# Residuals plot  
+ggplot(data.frame(Fitted = fitted(model), 
+                  Residuals = resid(model)),                
+       aes(x = Fitted, y = Residuals)) +      
+  geom_point() +      
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +      
+  labs(title = "Residuals vs Fitted Values") +      
+  theme_bw()
+```

@@ -1,0 +1,305 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Basic Visualization and Plot Customisation with ggplot2
+
+### Learning Objectives:
+
+-   Understand the foundational concepts of `ggplot2`
+-   Learn how to use aesthetics (mapping data to visual properties) and geometries (plot types)
+-   Create basic visualizations: scatter plots, bar charts, and histograms
+-   Learn how to enhance visualizations by adding labels, themes, and colour palettes
+-   Customize plots to improve clarity and aesthetics
+
+## Session Outline
+
+### 1. Review of Day 7
+
+-   Recap key data manipulation techniques with `dplyr`: `select()`, `filter()`, `mutate()`, and `arrange()`
+-   Discuss how cleaned and transformed datasets set the stage for visualization
+
+### 2. Introduction to ggplot2 Basics
+
+`ggplot2` is part of the **tidyverse** and is a versatile library for creating advanced visualizations.
+
+-   **Basic Structure:**
+
+    ``` r
+    ggplot(data, aes(x = <X>, y = <Y>)) + <geom_function>()
+    ```
+
+    -   `data`: The dataset
+    -   `aes()`: Aesthetics mapping data columns to visual properties
+    -   `geom_function()`: The geometry defining the plot type
+
+### 3. Creating Basic Visualizations
+
+**Scatter Plots**
+
+Used to visualize the relationship between two continuous variables
+
+-   Plotting `mpg` vs. `wt` in the `mtcars` dataset
+
+    ``` r
+    library(ggplot2)   
+
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() 
+    ```
+
+-   Adding colour and size aesthetics
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg, color = cyl, size = hp)) +     
+      geom_point()
+    ```
+
+**Hands-on Exercise**
+
+-   Create a scatter plot for `hp` vs. `mpg` with `cyl` as a colour aesthetic.
+
+**Bar Charts**
+
+Used for categorical data visualization
+
+-   Count the number of cars by the number of cylinders:
+
+    ``` r
+    ggplot(mtcars, aes(x = factor(cyl))) +     
+      geom_bar() 
+    ```
+
+-   Adding colour fill based on another variable (this creates a legend)
+
+    ``` r
+    ggplot(mtcars, aes(x = factor(cyl), fill = factor(gear))) +     
+      geom_bar(position = "dodge", colour = 'black') 
+    ```
+
+**Hands-on Exercise**
+
+-   Create a bar chart showing the count of cars for each value of `gear`.
+
+**Histograms**
+
+Used to visualize the distribution of a continuous variable
+
+-   Distribution of `mpg`:
+
+    ``` r
+    ggplot(mtcars, aes(x = mpg)) +     
+      geom_histogram(binwidth = 5, fill = "blue", colour = "black") 
+    ```
+
+-   Adjusting bin width for granularity
+
+    ``` r
+    ggplot(mtcars, aes(x = mpg)) +     
+      geom_histogram(binwidth = 2)
+    ```
+
+**Hands-on Exercise**
+
+-   Create a histogram for the `wt` column with a bin width of 0.5.
+
+### 4. Adding Titles, Labels, and Legends
+
+**Adding Titles and Axis Labels**
+
+-   Use the `labs()` function:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() +     
+      labs(title = "Scatter Plot of MPG vs Weight",          
+           x = "Weight (1000 lbs)",          
+           y = "Miles per Gallon")  
+    ```
+
+**Customizing Legends**
+
+-   Control legend titles and labels:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +     
+      geom_point() +     
+      labs(colour = "Number of Cylinders") 
+    ```
+
+**Hands-on Exercise**
+
+-   Create a scatter plot of `hp` vs. `mpg` and add a title, axis labels, and a legend for `cyl`.
+
+### 5. Applying Themes and Adjusting Appearance
+
+**Using Predefined Themes**
+
+-   Use built-in themes to quickly style plots
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+    geom_point() +     
+    theme_minimal() 
+    ```
+
+**Popular Themes:**
+
+-   `theme_minimal()`: Clean and minimal design
+-   `theme_classic()`: Classic design with axes and ticks
+-   `theme_dark()`: A dark background
+
+**Customizing Themes**
+
+-   Modify font sizes, colours, and grid lines:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() +     theme_minimal() +  
+      theme(axis.title.x = element_text(size = 14, color = "blue"),  # modify the x axis title
+            axis.title.y = element_text(size = 14, color = "blue"),  # modify the y axis title
+            plot.title = element_text(size = 16, hjust = 0.5)        # Modify the title of plot
+            )   
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a bar chart for `gear` and apply the `theme_classic()` style. Add a title and modify the axis title fonts.
+
+### 6. Customizing Colour Palettes
+
+**Using Predefined Colour Scales**
+
+-   Use `scale_color_brewer()` for sequential, diverging, or qualitative palettes:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +     
+      geom_point(size = 3) +     
+      scale_color_brewer(palette = "Set1") 
+    ```
+
+**Customizing Fill Colours for Bar Charts**
+
+-   Use `scale_fill_manual()` to define specific colours:
+
+    ``` r
+    ggplot(mtcars, aes(x = factor(cyl), fill = factor(cyl))) +     
+      geom_bar() +     
+      scale_fill_manual(values = c("4" = "orange", "6" = "navyblue", "8" = "green")) 
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a histogram for `hp` with a custom colour palette using `scale_fill_manual()`.
+
+### 7. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Use the `iris` dataset and:
+
+    1.  Create a scatter plot of `Petal.Length` vs. `Sepal.Length`, colouring points by `Species`. Add a title and axis labels.
+
+    2.  Create a bar chart showing the count of flowers for each species, applying a custom colour palette.
+
+    3.  Create a histogram of `Sepal.Width` with a custom theme and colour palette.
+
+**Solutions for Group Activity**
+
+``` r
+# 1. Scatter Plot  
+ggplot(iris, aes(x = Petal.Length, y = Sepal.Length, colour = Species)) +  
+  geom_point(size = 3) +  
+  labs(title = "Petal vs Sepal Length by Species",  
+       x = "Petal Length",  
+       y = "Sepal Length") +  
+  theme_minimal()  
+
+# 2. Bar Chart  
+ggplot(iris, aes(x = Species, fill = Species)) +  
+  geom_bar() +  
+  scale_fill_manual(values = c("setosa" = "red", "versicolor" = "blue", "virginica" = "green")) +  
+  labs(title = "Count of Flowers by Species",  
+       x = "Species",  
+       y = "Count") +  
+  theme_classic()  
+
+# 3. Histogram  
+ggplot(iris, aes(x = Sepal.Width)) +  
+  geom_histogram(binwidth = 0.2, fill = "purple", colour = "black") +  
+  labs(title = "Distribution of Sepal Width",  
+       x = "Sepal Width",  
+       y = "Frequency") +  
+  theme_minimal()  
+```
+
+### 8. Assignment
+
+**1. Scatter Plot:**
+
+Create a scatter plot for `hp` vs. `wt` with the following customizations:
+
+-   Title: "Relationship Between Horsepower and Weight"
+-   X-axis label: "Weight (1000 lbs)"
+-   Y-axis label: "Horsepower"
+-   Apply the `theme_minimal()` style
+
+**2. Bar Chart:**
+
+Create a bar chart for `gear` and customize:
+
+-   Fill colours using `scale_fill_manual()`
+-   Title: "Distribution of Gears"
+-   Apply the `theme_classic()` style
+
+**3. Histogram:**
+
+Create a histogram for `mpg` with:
+
+-   Bin width: 2
+-   Custom fill and border colours
+-   Title and axis labels
+
+### Assignment Solutions
+
+**1. Scatter Plot:**
+
+``` r
+ggplot(mtcars, aes(x = wt, y = hp)) +     
+  geom_point(color = "blue", size = 3) +     
+  labs(title = "Relationship Between Horsepower and Weight",          
+       x = "Weight (1000 lbs)",          
+       y = "Horsepower") +     
+  theme_minimal() 
+```
+
+**2. Bar Chart:**
+
+``` r
+ggplot(mtcars, aes(x = factor(gear), fill = factor(gear))) +     
+  geom_bar() +     
+  scale_fill_manual(values = c("3" = "red", "4" = "green", "5" = "blue")) +     
+  labs(title = "Distribution of Gears",          
+       x = "Number of Gears",          
+       y = "Count") +     
+  theme_classic() 
+```
+
+**3. Histogram:**
+
+``` r
+ggplot(mtcars, aes(x = mpg)) +     
+  geom_histogram(binwidth = 2, fill = "purple", color = "black") +     
+  labs(title = "Histogram of MPG",          
+       x = "Miles per Gallon",          
+       y = "Count")
+```
+
+### 9. Recap and Q&A
+
+-   Recap key ggplot2 concepts: aesthetics, geometries, scatter plots, bar charts, and histograms
+-   Address participant questions
+-   Preview for Day 6: **1st Group Project**

@@ -1,0 +1,394 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Principal Component Analysis (PCA) and Advanced Plot Customisation in R
+
+### Learning Objectives:
+
+-   Understand the concept and purpose of Principal Component Analysis (PCA)
+-   Learn how to perform PCA in R and interpret the results
+-   Visualize PCA results using `ggplot2`
+-   Reduce dimensionality while preserving key information
+-   Learn advanced customization techniques in `ggplot2`
+-   Master faceting for multi-variable visualizations
+-   Customize themes, annotations, and layouts for polished, presentation-ready plots
+
+## Session Outline
+
+### 1. Introduction to Principal Component Analysis (PCA)
+
+**What is PCA?**
+
+Principal Component Analysis (PCA) is a statistical technique used to:
+
+-   Reduce the dimensionality of a dataset while retaining important information.
+-   Identify patterns and relationships among variables.
+-   Transform correlated variables into uncorrelated principal components (PCs).
+
+**Why Use PCA?**
+
+-   Removes redundancy caused by highly correlated variables.
+-   Improves visualization of high-dimensional data.
+-   Reduces computational cost in machine learning models.
+
+**Mathematical Foundation (Brief Overview)**
+
+PCA transforms the original dataset using an **eigenvalue decomposition** or **Singular Value Decomposition (SVD)** of the covariance matrix.
+
+-   **Eigenvalues** indicate the variance explained by each principal component.
+-   **Eigenvectors** determine the direction of the principal components.
+
+### 2. Performing PCA in R
+
+**Step 1: Load and Prepare Data**
+
+``` r
+# Load dataset 
+data("iris")   
+
+# Remove categorical column
+iris_data <- iris[, 1:4]
+
+# Standardize the data (important for PCA) 
+iris_scaled <- scale(iris_data) 
+```
+
+**Step 2: Compute PCA**
+
+``` r
+# Perform PCA 
+pca_result <- prcomp(iris_scaled)
+
+# View PCA summary 
+summary(pca_result)
+```
+
+**Step 3: Interpret PCA Output**
+
+``` r
+# View principal components 
+print(pca_result$rotation)  
+
+# View standard deviations of principal components 
+print(pca_result$sdev) 
+
+# View transformed data 
+head(pca_result$x)
+```
+
+**Understanding the Output**
+
+-   **Standard deviations (`sdev`)**: Shows the variance captured by each component.
+-   **Rotation (eigenvectors)**: Indicates how much each original variable contributes to each PC.
+-   **Scores (`x`)**: Transformed dataset in terms of principal components.
+
+### 3. Advanced Plot Customization Techniques
+
+**Recap Customizing Titles, Labels, and Legends**
+
+1.  **Adding and Formatting Titles and Legends**
+
+    ``` r
+    library(ggplot2)
+
+    # Plot with titles and labels 
+    ggplot(mtcars, aes(x = wt, y = mpg)) +        
+      geom_point() +        
+      labs(title = "Scatter Plot of MPG vs Weight",                 
+           subtitle = "Relationship between weight and fuel efficiency",          
+           x = "Weight (1000 lbs)",                  
+           y = "Miles per Gallon") +        
+      theme_bw()  
+
+    # Plot with customised legend 
+    ggplot(mtcars, aes(x = wt, y = mpg, colour = factor(cyl))) +   
+      geom_point(size = 3) +        
+      labs(colour = "Cylinders") +        
+      theme_bw() 
+    ```
+
+2.  **Adding Annotations to Plots**
+
+-   Annotate key points or areas in the plot:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +        
+      geom_point() +        
+      annotate("text", x = 5, y = 15,             
+               label = "High Weight, Low MPG",             
+               colour = "red") +        
+      labs(title = "Scatter Plot with Annotation") +       
+      theme_bw()
+    ```
+
+**Customizing Plot Appearance with `theme()`**
+
+-   Customize individual elements:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() +     
+      labs(title = "Customized Scatter Plot") +     
+      theme_minimal() +     
+      theme(     
+        plot.title = element_text(size = 16, face = "bold", hjust = 0.5, color = "blue"),
+        axis.title.x = element_text(size = 12, color = "darkgreen"),       
+        axis.title.y = element_text(size = 12, color = "darkred"),       
+        panel.grid.major = element_line(color = "gray", size = 0.5)    
+        )
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a scatter plot of `mpg` vs `hp` in `mtcars`, and add annotations for cars with the highest and lowest horsepower. Customise the plot title with a `bold` font.
+
+### 4. Scree Plot and Variance Explained by PCA
+
+**Step 4: Plot Explained Variance (Scree Plot)**
+
+``` r
+library(ggplot2)  
+
+# Compute proportion of variance 
+variance_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2)  
+
+# Create scree plot 
+ggplot(data = data.frame(PC = 1:length(variance_explained), 
+                         Variance = variance_explained),         
+       aes(x = PC, y = Variance)) +   
+  geom_bar(stat = "identity", fill = "blue") +   
+  geom_line(aes(group = 1), colour = "red", linewidth = 1) +   
+  labs(title = "Scree Plot of PCA", 
+       x = "Principal Components", 
+       y = "Proportion of Variance Explained") +   
+  theme_bw() 
+```
+
+**Interpretation:**
+
+-   The **elbow point** in the scree plot helps determine how many components to retain.
+
+-   If the first 2 or 3 components explain most of the variance (\>80%), dimensionality reduction is effective.
+
+### 5. Visualizing PCA Results
+
+**Step 5: Biplot (Visualizing Data in PC Space)**
+
+``` r
+library(ggbiplot)
+
+ggbiplot(pca_result, obs.scale = 1, var.scale = 1) +
+  labs(title = 'PCA Biplot of Iris Data') +
+  theme_bw()
+```
+
+-   `Petal.Length` and `Petal.Width` arrows point in very similar directions, indicating a strong positive correlation between these two variables.
+-   `Sepal.Length` shows a moderate positive correlation with both `Petal.Length` and `Petal.Width`.
+-   `Sepal.Width` appears to be somewhat independent of the other variables, as its arrow is nearly perpendicular to their arrows
+
+**Step 6: PCA Scatter Plot with ggplot2**
+
+``` r
+# Convert PCA results to a data frame 
+pca_df <- data.frame(pca_result$x, Species = iris$Species)  
+
+# Scatter plot of first two PCs 
+ggplot(pca_df, aes(x = PC1, y = PC2, colour = Species)) +   
+  geom_point(size = 3) +   
+  labs(title = "PCA of Iris Dataset", 
+       x = "Principal Component 1", 
+       y = "Principal Component 2") +   
+  theme_bw()
+```
+
+The plot provides a visual representation of how the `Iris` species differ morphologically (in their physical form). `Setosa` has a distinct morphology compared to `Versicolor` and `Virginica`, while the latter two are more similar but still distinguishable in this PC space.
+
+In summary, this plot shows a clear separation of Iris species in the space defined by the first two principal components, highlighting the discriminatory power of PCA in distinguishing between these species based on their physical characteristics
+
+### 6. Faceting for Multi-Variable Visualizations
+
+**Faceting by a Single Variable**
+
+-   Split plots by the levels of a single variable using `facet_wrap()`:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() +     facet_wrap(~ cyl) +     
+      labs(title = "MPG vs Weight by Cylinder Count",          
+           x = "Weight (1000 lbs)",          
+           y = "Miles per Gallon") +     
+      theme_bw()
+    ```
+
+**Faceting by Two Variables**
+
+-   Use `facet_grid()` for a two-variable layout:
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point() +     facet_grid(gear ~ cyl) +     
+      labs(title = "MPG vs Weight by Gears and Cylinders") +     
+      theme_bw()
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a data frame from `pca_result` and make a scatter plot of `PC1` vs `PC2` and facet by `Species` using `facet_wrap()`.
+
+**Hands-on Exercise:**
+
+-   Perform PCA on the `mtcars` dataset (excluding categorical variables).
+
+-   Create a scree plot and visualize the first two principal components.
+
+### 7. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Perform PCA on the `USArrests` dataset.
+-   Create a scree plot to determine the number of components to retain.
+-   Generate a scatter plot labelled by the regions (`rownames`)
+-   Customise the scatter plot anyway you like using `theme()`
+
+**Solution for Group Challenge:**
+
+``` r
+library(dplyr)
+
+# Load dataset 
+usarrests_scaled <- scale(USArrests)  
+
+# Perform PCA 
+pca_usa <- prcomp(usarrests_scaled)  
+
+# Scree Plot 
+variance_usa <- pca_usa$sdev^2 / sum(pca_usa$sdev^2)  
+
+ggplot(data = data.frame(PC = 1:length(variance_usa), 
+                         Variance = variance_usa),         
+       aes(x = PC, y = Variance)) +   
+  geom_bar(stat = "identity", fill = "blue") +   
+  geom_line(aes(group = 1), color = "red", linewidth = 1) +   
+  labs(title = "Scree Plot of PCA (USArrests)", 
+       x = "Principal Components", 
+       y = "Variance Explained") +   
+  theme_bw()  
+
+# Scatter Plot of First Two PCs 
+pca_usa_df <- as_tibble(pca_usa$x, 
+                         rownames = 'State')  
+
+ggplot(pca_usa_df, 
+       aes(x = PC1, y = PC2, label = State)) +   
+  geom_point(size = 2, colour = 'navy') +   
+  labs(title = "PCA of USArrests Dataset", 
+       x = "Principal Component 1", 
+       y = "Principal Component 2") +   
+  theme_bw() +
+  
+# Cutomised Plot  
+ggplot(pca_usa_df, 
+       aes(x = PC1, y = PC2, label = State)) +   
+  geom_label(size = 3, colour = 'black', fill = 'yellow') +   
+  labs(title = "Customised PCA  plot of USArrests Dataset", 
+       x = "Principal Component 1", 
+       y = "Principal Component 2") +   
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 16, face = 'bold', hjust = 0.5, colour = 'brown4'),
+    axis.title = element_text(size = 13, colour = 'black', face = 'italic'),
+    axis.text = element_text(size = 11, colour = 'black'),
+    axis.ticks = element_line(size = 1, colour = 'red'),
+    axis.ticks.length = unit(0.15, 'cm')
+  )
+```
+
+### 8. Assignment
+
+**1. Compute PCA for the `mtcars` Dataset:**
+
+-   Remove categorical variables (`cyl`, `am`, `gear`).
+-   Standardize the remaining variables.
+-   Compute PCA and print the summary.
+
+**2. Create a Scree Plot:**
+
+-   Compute the proportion of variance explained.
+-   Generate a scree plot using `ggplot2`.
+
+**3. Visualize PCA Components:**
+
+-   Create a scatter plot of the first two PCs and split the plots by `cyl` using `facet_wrap` . Add some customisations to your plot
+
+### Assignment Solutions
+
+**1. PCA on `mtcars` Dataset:**
+
+``` r
+library(dplyr)
+
+# Load dataset and remove categorical variables 
+mtcars_data <- mtcars |> select("mpg", "hp", "wt", "disp", "drat", "qsec") 
+
+# Standardize the data 
+mtcars_scaled <- scale(mtcars_data)  
+
+# Perform PCA 
+pca_mtcars <- prcomp(mtcars_scaled) 
+summary(pca_mtcars)
+```
+
+**2. Scree Plot of `mtcars` PCA:**
+
+``` r
+variance_mtcars <- pca_mtcars$sdev^2 / sum(pca_mtcars$sdev^2)  
+
+ggplot(data = data.frame(PC = 1:length(variance_mtcars), 
+                         Variance = variance_mtcars),
+       aes(x = PC, y = Variance)) +   
+  geom_bar(stat = "identity", fill = "navy", colour = 'black') +   
+  geom_line(aes(group = 1), colour = "yellow", linewidth = 1.2) +   
+  labs(title = "Scree Plot of PCA (mtcars)", 
+       x = "Principal Components", 
+       y = "Variance Explained") +   
+  theme_bw()
+```
+
+**3. Scatter Plot of PCA Components:**
+
+``` r
+# Convert PCA results to a data frame 
+pca_mtcars_df <- as_tibble(pca_mtcars$x, 
+                            Cylinders = as.factor(mtcars$cyl))  
+
+# Scatter plot of first two PCs 
+ggplot(pca_mtcars_df, aes(x = PC1, y = PC2, colour = Cylinder)) +   
+  geom_point(size = 2.5) +   
+  labs(title = "PCA of mtcars Dataset", 
+       x = "Principal Component 1", 
+       y = "Principal Component 2") +   
+  facet_wrap(~Cylinder, scale = 'free_y',
+             labeller = labeller(Cylinder = c('4' = 'Four Cylinder',
+                                 '6' = 'Six Cylinder',
+                                 '8' = 'Eight Cylinder'))) +
+  theme_bw() +
+  theme(plot.title = element_text(colour = 'black', hjust = 0.5, size = 16, face = 'bold'),
+        plot.axis.text = element_text(colour = 'black', size =10),
+        plot.axis.title = element_text(colour = 'black', size = 12),
+        strip.background = element_rect(fill = 'lightgreen', colour = 'black', linewidth = 1),
+        strip.text = element_text(size = 11, face = 'italic', colour = 'black')
+        )
+```
+
+### 
+
+### 9. Recap and Q&A
+
+-   Recap key PCA concepts: dimensionality reduction, explained variance, visualization.
+-   Discuss real-world applications of PCA in feature engineering and clustering.
+-   Address participant questions and challenges.
+-   Preview for Day 12**: Clustering Techniques in R**.

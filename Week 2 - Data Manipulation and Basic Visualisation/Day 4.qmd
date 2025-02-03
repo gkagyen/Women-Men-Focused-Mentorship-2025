@@ -1,0 +1,260 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Data Manipulation Techniques and Intro to dplyr
+
+### Learning Objectives
+
+-   Understand and apply data manipulation techniques
+-   Filter, sort, and subset data in R
+-   Add, modify, and remove columns in data frames
+-   Practice combining and reshaping datasets
+
+## Session Outline
+
+### 1. Review of Day 3
+
+-   Recap key points from Day 4 on importing and exploring data
+-   Participants share challenges or questions about data exploration exercises
+
+### 2. Filtering and Subsetting Data
+
+**Filtering Rows**
+
+1.  **Using Logical Conditions:**
+
+    ``` r
+    # Filter rows where mpg (miles per gallon) > 20 in the mtcars dataset   
+    filtered_data <- mtcars[mtcars$mpg > 20, ]   
+    head(filtered_data)
+    ```
+
+2.  **Using `subset()` Function:**
+
+    ``` r
+    filtered_data <- subset(mtcars, mpg > 20 & cyl == 4)   
+    head(filtered_data)
+    ```
+
+**Selecting Columns**
+
+1.  **Using Bracket Notation:**
+
+    ``` r
+    selected_data <- mtcars[, c("mpg", "cyl")]   
+    head(selected_data)
+    ```
+
+2.  **Using `select()` from `dplyr`:**
+
+    ``` r
+    library(dplyr)   
+
+    selected_data <- select(mtcars, mpg, cyl)   
+    head(selected_data)
+    ```
+
+**Hands-on Exercise:**
+
+-   Filter rows where `hp` (horsepower) is greater than 100.
+
+-   Select only the `mpg`, `hp`, and `gear` columns.
+
+### 3. Sorting Data
+
+1.  **Using `order()`:**
+
+    ``` r
+    sorted_data <- mtcars[order(mtcars$mpg), ]  # Ascending order   
+    head(sorted_data)
+    ```
+
+2.  **Using `arrange()` from `dplyr`:**
+
+    ``` r
+    sorted_data <- arrange(mtcars, desc(mpg))  # Descending order   
+    head(sorted_data)
+    ```
+
+**Hands-on Exercise:**
+
+-   Sort the `mtcars` dataset by `wt` (weight) in ascending order.
+
+### 4. Adding, Modifying, and Removing Columns
+
+**Adding New Columns**
+
+1.  **Using `$` Operator:**
+
+    ``` r
+    mtcars$efficiency <- mtcars$mpg / mtcars$hp   head(mtcars)
+    ```
+
+2.  **Using `mutate()` from `dplyr`:**
+
+    ``` r
+    library(dplyr)   
+
+    mtcars <- mutate(mtcars, efficiency = mpg / hp)   
+    head(mtcars)
+    ```
+
+**Removing Columns**
+
+1.  **Using `NULL`:**
+
+    ``` r
+    mtcars$efficiency <- NULL   
+    head(mtcars)
+    ```
+
+2.  **Using `select()` with `dplyr`:**
+
+    ``` r
+    mtcars <- select(mtcars, -efficiency)   
+    head(mtcars)
+    ```
+
+**Hands-on Exercise:**
+
+-   Add a new column `power_to_weight` that divides `hp` by `wt`.
+-   Remove the `gear` column from the dataset.
+
+### 5. Combining and Reshaping Data
+
+**Combining Datasets**
+
+1.  **Using `rbind()` (Row Bind)**
+
+    ``` r
+    data1 <- data.frame(A = c(1, 2), B = c(3, 4))   
+    data2 <- data.frame(A = c(5, 6), B = c(7, 8))   
+    combined_data <- rbind(data1, data2)   
+    print(combined_data)
+    ```
+
+2.  **Using `cbind()` (Column Bind)**
+
+    ``` r
+    data3 <- cbind(data1, C = c(9, 10))   
+    print(data3)
+    ```
+
+**Reshaping Datasets**
+
+1.  **Using `pivot_longer()` from `tidyr`**
+
+    ``` r
+    library(tidyr)   
+
+    long_data <- pivot_longer(data3, cols = c(A, B, C), names_to = "Variable", values_to = "Value")   
+    print(long_data)
+    ```
+
+2.  **Using `pivot_wider()` from `tidyr`**
+
+    ``` r
+    wide_data <- pivot_wider(long_data, names_from = "Variable", values_from = "Value")   
+    print(wide_data)
+    ```
+
+### 6. Combining Pipes with dplyr Functions
+
+1.  **Chaining functions with `%>%` from `maggritr` or `|>`** **from base R**
+
+    ``` r
+    # using |> 
+    mtcars |> select(mpg, cyl, hp) |> 
+      filter(mpg > 20 & cyl == 4) |> 
+      mutate(efficiency = mpg/hp) |> 
+      arrange(desc(efficiency))
+    ```
+
+**Hands-on Exercise**
+
+-   Combine two small datasets using `rbind()`.
+-   Reshape a dataset from wide to long format using `pivot_longer()`.
+
+### 7. Grouping and Summarizing Data
+
+1.  **Summarizing by Group**
+
+    ``` r
+    grouped_summary <- mtcars %>% 
+      group_by(cyl) %>% 
+      summarize(average_mpg = mean(mpg), 
+                maximum_mpg = max(mpg),
+                minimum_mpg = min(mpg))     
+
+    print(grouped_summary)
+    ```
+
+Hands on Exercise
+
+-   Calculate the average weight (`wt`) grouped by Engine shape (`vs`)
+
+### 8. Interactive Group Activity
+
+-   Group Challenge
+
+    1.  Filter the `mtcars` dataset for cars with `mpg` greater than 25 and `cyl` equal to 4.
+
+    2.  Add a column `efficiency_score` calculated as `mpg / wt`.
+
+    3.  Reshape the dataset to show `mpg`, `hp`, and `efficiency_score` in long format.
+
+### 9. Assignment
+
+**1. Filtering Data**\
+Filter the `mtcars` dataset for rows where `cyl` equals 6 and `hp` is greater than 120.
+
+**2. Adding Columns**\
+Add a new column `hp_per_cyl` by dividing `hp` by `cyl`.
+
+**3. Sorting Data**\
+Sort the dataset by `disp` (displacement) in descending order.
+
+**4. Reshaping Data**\
+Use the `iris` dataset to reshape it into long format, showing columns for `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`.
+
+### Assignment Solutions
+
+**1. Filtering Data**
+
+``` r
+filtered_data <- subset(mtcars, cyl == 6 & hp > 120)   
+print(filtered_data)
+```
+
+**2. Adding Columns**
+
+``` r
+mtcars$hp_per_cyl <- mtcars$hp / mtcars$cyl   
+head(mtcars)
+```
+
+**3. Sorting Data**
+
+``` r
+sorted_data <- mtcars[order(-mtcars$disp), ]   
+head(sorted_data)
+```
+
+**4. Reshaping Data**
+
+``` r
+library(tidyr)   
+
+long_iris <- pivot_longer(iris, cols = c(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width), names_to = "Measurement", values_to = "Value")   
+head(long_iris)
+```
+
+### 10. Recap and Q&A
+
+-   Summarize the day’s learning objectives: filtering, sorting, adding/removing columns, combining, and reshaping data
+-   Address participant questions
+-   Provide a preview for Day 5: **Basic Visualisation with `ggplot2`**

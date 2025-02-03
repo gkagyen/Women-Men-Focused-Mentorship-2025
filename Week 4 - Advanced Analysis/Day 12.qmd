@@ -1,0 +1,312 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Clustering Techniques in R (Machine Learning)
+
+### Learning Objectives
+
+-   Understand the concept and purpose of clustering
+-   Learn and implement K-means clustering in R
+-   Perform hierarchical clustering and interpret dendrograms
+-   Visualize clustering results with `ggplot2`
+
+## Session Outline
+
+### 1. Introduction to Clustering
+
+**What is Clustering?**
+
+Clustering is an unsupervised learning technique used to group similar observations into clusters based on their characteristics.
+
+**Types of Clustering Algorithms:**
+
+1.  **Partition-based (e.g., K-means)** – Assigns each data point to one of `k` predefined clusters.
+2.  **Hierarchical (e.g., Agglomerative)** – Creates a tree-like structure of clusters (dendrogram).
+3.  **Density-based (e.g., DBSCAN)** – Identifies clusters based on high-density regions.
+
+**When to Use Clustering?**
+
+-   Market segmentation: grouping based on purchase behaviour, demographics or other things.
+-   Customer behaviour analysis: grouping customers based on similar behaviours
+-   Anomaly detection: identify abnormal data points that do not fit into any clusters
+-   Image compression: reducing the number of colours in an image by clustering similar colours together
+
+### 2. K-Means Clustering
+
+K-means clustering is an algorithm that aims to partition *`n`* observations into *`k`* clusters in which each observation belongs to the cluster with the nearest `mean (centroid)`, serving as a prototype of the cluster. `"K"` is a user-defined parameter representing the number of clusters.
+
+**Step 1: Prepare the Data**
+
+Use the `iris` dataset and remove the categorical `Species` column:
+
+``` r
+# Load dataset and remove categorical column 
+data("iris") 
+iris_data <- iris |> select(1:4)
+```
+
+**Step 2: Choose the Number of Clusters (Elbow Method)**
+
+To determine the optimal number of clusters, we use the **Elbow Method**.
+
+In this method we calculate the total within-cluster sum of squares (WSS) for different values of k and plot them. The "elbow" in the plot suggests a good choice for k.
+
+``` r
+library(ggplot2)  
+
+# Function to compute total within-cluster sum of squares 
+wss <- sapply(1:10, function(k){   
+  kmeans(iris_data, centers = k, nstart = 10)$tot.withinss 
+  })  
+
+# Plot Elbow Method 
+elbow_plot <- data.frame(Clusters = 1:10, WSS = wss)  
+ggplot(elbow_plot, aes(x = Clusters, y = WSS)) +   
+  geom_point() +   
+  geom_line() +   
+  scale_x_continuous(breaks = c(1:10))+
+  labs(title = "Elbow Method for Optimal K", 
+       x = "Number of Clusters", 
+       y = "Within-Cluster Sum of Squares") +   
+  theme_bw() 
+```
+
+-   This first part calculates the Within-Cluster Sum of Squares `(WSS)` for different values of `k` `(1:10)`.
+
+-   `kmeans(iris_data, centers = k, nstart = 10)$tot.withinss`: This is the core of the calculation.
+
+    the code performs k-means clustering on the `iris_data`. `centers = k` sets the number of clusters to the current value of `k` in the loop. `nstart = 10` runs the k-means algorithm 10 times with different random starting centroids and keeps the best result (the one with the lowest total within-cluster sum of squares). This helps to avoid getting stuck in local optima due to bad initial centroid choices.
+
+-   `$tot.withinss` extracts the total within-cluster sum of squares from the `kmeans()` output. The within-cluster sum of squares measures the total dispersion within each cluster. Lower WSS indicates tighter clusters.
+
+-   The `sapply()` function returns a vector named `wss` containing the WSS values for each value of k from 1 to 10.
+
+**Step 3: Apply K-Means Clustering**
+
+Based on the Elbow Method, let's take `k = 3`. This aligns with the number of `Species` in the iris data. The primary function for k-means clustering in R is `kmeans()`
+
+``` r
+set.seed(123)  # Ensure reproducibility 
+
+kmeans_result <- kmeans(iris_data, centers = 3, nstart = 25)  
+print(kmeans_result)
+
+# Add cluster labels to dataset 
+iris_clustered <- iris     # create a copy of the iris dataset
+iris_clustered <- iris_clustered |> mutate(cluster = as.factor(kmeans_result$cluster))
+```
+
+**Step 4: Visualizing Clusters**
+
+``` r
+library(gridExtra)
+
+# kmeans cluster
+kmeans_plot <- ggplot(iris_clustered, 
+       aes(x = Sepal.Length, y = Sepal.Width, colour = cluster)) +   
+  geom_point(size = 2.5) +   
+  labs(title = "K-Means Clustering on Iris Dataset", 
+       x = "Sepal Length", y = "Sepal Width") +   
+  theme_bw()
+
+# Original Species Plot
+species_plot <- ggplot(iris_clustered, 
+       aes(x = Sepal.Length, y = Sepal.Width, colour = Species)) +   
+  geom_point(size = 2.5) +   
+  labs(title = "Original Species of Iris Dataset", 
+       x = "Sepal Length", y = "Sepal Width") +   
+  theme_bw()
+
+grid.arrange(kmeans_plot, species_plot, ncol = 2)
+```
+
+**Hands-on Exercise:**
+
+-   Perform K-means clustering on the `mtcars` dataset (excluding categorical variables).
+-   Determine the optimal `k` using the Elbow Method.
+-   Visualize the clusters using `ggplot2`.
+
+### 3. Hierarchical Clustering
+
+Hierarchical clustering is a type of clustering algorithm that builds a hierarchy of clusters. Instead of partitioning the data into a pre-defined number of clusters like k-means, hierarchical clustering creates a tree-like structure (a dendrogram) that represents the nested relationships between clusters
+
+**Step 1: Compute Distance Matrix**
+
+Hierarchical clustering groups data step-by-step based on similarity (distance between points). The first step is to compute a **distance matrix** using the chosen distance metric
+
+``` r
+# Compute Euclidean distance matrix 
+dist_matrix <- dist(iris_data, method = "euclidean")
+```
+
+-   `dist()` function calculates the distance matrix.
+-   `method = "euclidean"` specifies that Euclidean distance should be used to measure the distance between data points
+
+**Step 2: Apply Hierarchical Clustering**
+
+``` r
+# Perform hierarchical clustering using complete linkage 
+hc <- hclust(dist_matrix, method = "complete")  
+
+# Plot the dendrogram 
+plot(hc, main = "Hierarchical Clustering Dendrogram", xlab = "", cex = 0.5) 
+```
+
+-   The code above performs hierarchical clustering using the `hclust()` function.
+-   `method = "complete"` specifies the "complete linkage" method. In complete linkage, the distance between two clusters is defined as the maximum distance between any two points in the respective clusters. This tends to produce more compact, spherical clusters.
+-   others methods include `"ward.D2"`, `"single"`, `"average"` etc.
+
+**Step 3: Cut the Dendrogram into Clusters**
+
+``` r
+# Cut tree into 3 clusters 
+clusters <- cutree(hc, k = 3)  
+
+# Add cluster labels to dataset 
+iris_hc <- iris 
+iris_hc <- iris_hc |> mutate(Clusters = as.factor(clusters))  
+
+# Visualize clusters 
+hcp <- ggplot(iris_hc, aes(x = Sepal.Length, y = Sepal.Width, colour = Clusters)) +   
+  geom_point(size = 2) +   
+  labs(title = "Hierarchical Clustering on Iris Dataset", 
+       x = "Sepal Length", 
+       y = "Sepal Width") +   
+  theme_bw()
+
+original <- ggplot(iris_hc, aes(x = Sepal.Length, y = Sepal.Width, colour = Species)) +   
+  geom_point(size = 2) +   
+  labs(title = "Hierarchical Clustering on Iris Dataset", 
+       x = "Sepal Length", 
+       y = "Sepal Width") +   
+  theme_bw()
+
+grid.arrange(hcp, original, ncol = 2)
+```
+
+-   `cutree(hc, k = 3)` cuts the dendrogram at a height that results in 3 clusters.
+-   `cutree()` takes the hierarchical clustering object (`hc`) and cuts the dendrogram at the level that produces 3 clusters. The function returns a vector of cluster assignments for each data point.
+-   There are other methods like `Silhouette Analysis`, `Gap Statistics` and others to determine the optimal clusters but it is beyond the scope of this tutorials.
+
+**Hands-on Exercise:**
+
+-   Perform hierarchical clustering on the `mtcars` dataset.
+-   Cut the dendrogram into `k = 3` clusters.
+-   Visualize the clusters using `ggplot2`.
+
+### 4. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Use the `USArrests` dataset and:
+
+    1.  Perform K-means clustering, determining the best `k` using the Elbow Method.
+
+    2.  Perform hierarchical clustering and plot the dendrogram.
+
+    3.  Visualize the clusters using `ggplot2`.
+
+**Solution for Group Challenge:**
+
+``` r
+# Standardize data 
+usarrests_scaled <- scale(USArrests)  
+
+# K-Means clustering 
+set.seed(123) 
+kmeans_usa <- kmeans(usarrests_scaled, centers = 3, nstart = 25)  
+
+# Hierarchical clustering 
+dist_usa <- dist(usarrests_scaled) 
+hc_usa <- hclust(dist_usa, method = "complete")  
+
+# Plot dendrogram 
+plot(hc_usa, main = "Hierarchical Clustering Dendrogram")  
+
+# Cut into 3 clusters 
+usarrests_clusters <- cutree(hc_usa, k = 3)
+```
+
+### 5. Assignment
+
+**1. K-Means on `mtcars` Dataset:**
+
+-   Standardize `mpg`, `hp`, and `wt`.
+-   Determine the best `k` using the Elbow Method.
+-   Assign cluster labels and visualize.
+
+**2. Hierarchical Clustering on `mtcars`:**
+
+-   Compute the distance matrix.
+-   Apply hierarchical clustering with complete linkage.
+-   Cut the dendrogram into three clusters.
+
+### Assignment Solutions
+
+**1. K-Means on `mtcars`:**
+
+``` r
+# Standardize data 
+mtcars_scaled <- scale(mtcars[, c("mpg", "hp", "wt")])  
+# Find optimal k 
+wss_mtcars <- sapply(1:10, function(k) {   
+  kmeans(mtcars_scaled, centers = k, nstart = 10)$tot.withinss 
+  })  
+
+ggplot(data.frame(Clusters = 1:10, WSS = wss_mtcars), 
+       aes(x = Clusters, y = WSS)) +   geom_point() +   
+  geom_line() +   
+  labs(title = "Elbow Method for Optimal K", 
+       x = "Number of Clusters", y = "Within-Cluster Sum of Squares") +   
+  theme_bw()  
+
+# Perform K-means with k = 3 
+set.seed(123) 
+kmeans_mtcars <- kmeans(mtcars_scaled, centers = 3, nstart = 25)  
+
+# Add clusters 
+mtcars_clustered <- mtcars 
+mtcars_clustered$Cluster <- as.factor(kmeans_mtcars$cluster)  
+
+# Visualize clusters 
+ggplot(mtcars_clustered, aes(x = mpg, y = wt, color = Cluster)) +   
+  geom_point(size = 3) +   
+  labs(title = "K-Means Clustering on mtcars", x = "MPG", y = "Weight") +   
+  theme_bw() 
+```
+
+**2. Hierarchical Clustering on `mtcars`:**
+
+``` r
+# Compute distance matrix 
+dist_mtcars <- dist(mtcars_scaled, method = "euclidean")  
+
+# Perform hierarchical clustering 
+hc_mtcars <- hclust(dist_mtcars, method = "complete")  
+
+# Plot dendrogram 
+plot(hc_mtcars, main = "Hierarchical Clustering Dendrogram", xlab = "", sub = "")  
+
+# Cut tree into 3 clusters 
+clusters_mtcars <- cutree(hc_mtcars, k = 3)  
+
+# Add clusters to dataset
+mtcars_hc <- mtcars 
+mtcars_hc$Cluster <- as.factor(clusters_mtcars)  
+
+# Visualize clusters 
+ggplot(mtcars_hc, aes(x = mpg, y = wt, color = Cluster)) +   
+  geom_point(size = 3) +   
+  labs(title = "Hierarchical Clustering on mtcars", x = "MPG", y = "Weight") +
+  theme_bw()
+```
+
+### 6. Recap and Q&A
+
+-   Recap K-means and hierarchical clustering.
+-   Discuss real-world applications.
+-   Preview for Day 13: **Group Project 2 – Analysing and Reporting Insights from a Dataset**

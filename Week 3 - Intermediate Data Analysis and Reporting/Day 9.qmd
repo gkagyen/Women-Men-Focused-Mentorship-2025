@@ -1,0 +1,248 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Data Reporting with Quarto Markdown
+
+### Learning Objectives:
+
+-   Understand the purpose and benefits of Quarto Markdown
+-   Learn the structure of a Quarto Markdown document
+-   Create reproducible reports with text, code, and visualizations
+-   Export reports to HTML, PDF, and Word formats
+
+## Session Outline
+
+### 1. Introduction to R Quarto Markdown
+
+**What is Quarto Markdown?**
+
+Quarto is a next generation version of R Markdown that extends the functionality of R Markdown. It is a powerful tool that allows you to create dynamic, reproducible documents that combine code, text, and visualizations. It is widely used in
+
+-   **Data analysis reports**
+-   **Statistical modelling documentation**
+-   **Interactive tutorials**
+
+**Why Use Quarto Markdown?**
+
+-   Automates reporting and documentation
+-   Allows for seamless integration of text, code, and outputs
+-   Supports multiple output formats (HTML, PDF, Word, Presentations and Websites)
+
+### 2. Setting Up R Quarto
+
+**Installing and Loading Quarto**
+
+Quarto comes pre installed in the latest Rstudio version but you can manually install it as follows or download the software from [quarto.org](https://quarto.org/docs/download/)
+
+``` r
+install.packages("quarto") 
+library(quarto) 
+```
+
+**Creating a New Quarto Markdown File**
+
+1.  Open RStudio
+2.  Go to **File** → **New File** → **Quarto Document...**
+3.  Give the Document a title and select the desired output format (HTML, PDF, or Word)
+4.  Click **OK** to generate a template
+
+### 3. Structure of a Quarto Document
+
+**YAML Header (Metadata Section)**
+
+The YAML header appears at the top of the document and specifies metadata like title, author, and output format.
+
+``` yaml
+--- 
+title: "My First Quarto Document Report" 
+author: "Your Name" 
+format: 
+  html:
+    toc: true
+--- 
+```
+
+-   **`title`**: Document title
+-   **`author`**: Author's name
+-   **`format`**: Output format (HTML, PDF, Word, etc.)
+-   **`toc`**: Enables the table of contents
+
+**Quarto Markdown Text Formatting**
+
+You can add formatted text using Markdown syntax:
+
+| Format | Syntax | Example | Output |
+|------------------|------------------|-------------------|------------------|
+| **Bold** | `**bold text**` | `**Important**` | **Important** |
+| *Italic* | `*italic text*` | `*Emphasized*` | *Emphasized* |
+| `Inline Code` | `` `code` `` | `` `x <- 5` `` | `x <- 5` |
+| Lists | `- Item` | `- Point 1` | \- Point 1 |
+| Links | `[Text](URL)` | `[Google](https://google.com)` | [Google](https://google.com) |
+| Superscript | `Super^2^` | `Pie^2^` | Pie^2^ |
+| Strikethrough | `~~Strike~~` | `~~Cancel~~` | ~~Cancel~~ |
+
+### 4. Embedding Code in Quarto
+
+**Adding Code Chunks**
+
+Embed R code chunks using three back ticks ```` (```) ````, similar to R Markdown:
+
+```` ```{r} ````
+
+`summary(mtcars)`
+
+```` ``` ````
+
+**Key Chunk Options**
+
+``` r
+#| output-location: column  # Determines the location of a plot from the code chunk
+#| label: fig-mtcars        # Give the plot a label
+#| fig-cap: Miles per Gallon and Weight  # Write a caption for the plot
+#| warning: false          # display warnings from the code
+#| echo: true              # show or hide code on render
+```
+
+You can also switch between a visual and source mode in a Quarto document. In the visual mode you can add a code chunk by holding `Ctrl+Alt+I`
+
+![Quarto Visual and Source mode](images/clipboard-3784062680.png)
+
+### 5. Exporting Quarto Documents
+
+**Knit the Document**
+
+Click the **`Render`** button in RStudio to generate the report.
+
+**Output Formats**
+
+-   **`HTML:`** Default output, interactive and browser-ready
+-   **`PDF`**: Requires LaTeX installation (use `tinytex` for setup: `install.packages("tinytex")`) or type `quarto install tinytex` in the **terminal**
+-   **`Word`**: Generates `.docx` files for compatibility with Word
+
+**Hands-on Exercise**
+
+Create a Quarto document:
+
+1.  Add a title and author.
+2.  Include code to summarize `iris`.
+3.  Add a scatter plot of `Sepal.Length` vs `Petal.Length`.
+4.  Export as an HTML file.
+
+### 6. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Create a Quarto document analysing the `mtcars` dataset.
+
+-   Include:
+
+    -   A YAML header with a title, author, and table of contents.
+
+    -   Summary statistics grouped by `cyl`.
+
+    -   A scatter plot of `hp` vs `wt` with a trend line.
+
+    -   Export the report to HTML and PDF formats.
+
+**Solution for Group Challenge:**
+
+``` yaml
+--- 
+title: "MTCARS Analysis" 
+author: "Team Report" 
+date: "`r Sys.Date()`" 
+format:   
+  pdf:     
+    toc: true     
+    number-sections: true 
+--- 
+```
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| message: false
+
+library(dplyr)
+library(ggplot2)
+
+mtcars_summary <- mtcars %>% group_by(cyl) %>%summarize(mean_mpg = mean(mpg))
+
+print(mtcars_summary)
+
+ggplot(mtcars, aes(x = wt, y = hp)) +
+  geom_point() + geom_smooth(method = "lm", color = "red") + 
+  labs(title = "Horsepower vs Weight") + 
+  theme_bw()
+
+```
+
+### 7. Assignment
+
+1.  **Quarto Report**
+
+    Create a Quarto document analysing the `iris` dataset. Add a summary of the dataset. Include a scatter plot of `Sepal.Width` vs `Petal.Width`.
+
+2.  **Customizing Output**
+
+```         
+Add a table of contents (`toc: true`) and enable section numbering.
+```
+
+3.  **Hiding Code**
+
+    Add a code chunk that calculates the mean of `Sepal.Length`, but hide the code while showing the result.
+
+### Assignment Solution
+
+1.  **Quarto Report for `iris` Dataset**
+
+**YAML Header:**
+
+``` yaml
+--- 
+title: "Exploring the Iris Dataset" author: "Your Name" 
+date: "`r Sys.Date()`" 
+format:   
+  html:     
+    toc: true     
+    number-sections: true 
+--- 
+```
+
+**Markdown Text**
+
+``` markdown
+## Introduction 
+
+This report explores the `iris` dataset, including summary statistics and visualizations. 
+```
+
+**Code Chunks:**
+
+``` r
+#| fig-width: 6
+#| fig-height: 4
+
+summary(iris)
+ggplot(iris, aes(x = Sepal.Width, y = Petal.Width, color = Species)) +   
+  geom_point() 
+```
+
+2.  **Hiding Code**
+
+``` r
+#| echoe: false
+
+mean(iris$Sepal.Length)
+```
+
+### 8. Recap and Q&A
+
+-   Recap the benefits of Quarto and key features: YAML, code chunks, and exporting formats.
+-   Discuss differences between Quarto and traditional R Markdown.
+-   Preview for Day 10: **Time Series Analysis in R**

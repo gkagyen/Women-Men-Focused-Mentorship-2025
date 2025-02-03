@@ -1,0 +1,249 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Importing and Exploring Data in R
+
+### Learning Objectives
+
+-   Learn how to import various data formats into R (CSV, Excel, and text files)
+-   Understand basic data exploration techniques
+-   Identify common issues with data and troubleshoot them
+-   Calculate descriptive statistics such as mean, median, mode, and variance
+-   Summarize datasets using basic statistical functions in R
+
+## Session Outline
+
+### 1. Review of Day 2
+
+-   Recap the key concepts of vectors, matrices, lists, data frames, and tibbles
+-   Discuss practical use cases of each data structure
+-   Participants share their experiences with Day 3 exercises
+
+### 2. Importing Data
+
+**Importing CSV Files**
+
+1.  **Using `read.csv()`**
+
+    ``` r
+    data_csv <- read.csv("path/to/your/file.csv")   
+    head(data_csv)  # Display the first few rows  
+    ```
+
+2.  **Using `readr::read_csv()` (faster and better for larger files)**
+
+    ``` r
+    library(readr)   
+
+    data_csv <- read_csv("path/to/your/file.csv")   
+    head(data_csv)   
+    ```
+
+**Importing Excel Files**
+
+1.  **Using the `readxl` package**
+
+    ``` r
+    library(readxl)   
+
+    data_excel <- read_excel("path/to/your/file.xlsx", sheet = 1)   
+    head(data_excel)  
+    ```
+
+**Importing Text Files**
+
+1.  **Using `read.table()`**
+
+    ``` r
+    data_txt <- read.table("path/to/your/file.txt", header = TRUE, sep = "\t")
+    head(data_txt) 
+    ```
+
+**Hands-on Exercise**
+
+1.  Import a CSV file containing a small dataset of your choice (choose from the data provided).
+2.  Display the first six rows using `head()`.
+
+### 3. Exploring Data
+
+**Viewing the Structure of Your Data**
+
+1.  **Basic Functions for Exploration:**
+
+    ``` r
+    str(data_csv)        # View the structure   
+    summary(data_csv)   # Summary statistics   
+    dim(data_csv)      # Dimensions (rows, columns)   
+    names(data_csv)   # Column names   
+    ```
+
+2.  **Viewing the Top and Bottom Rows:**
+
+    ``` r
+    head(data_csv, 10)  # First 10 rows   
+    tail(data_csv, 5)   # Last 5 rows   
+    ```
+
+**Identify Missing Values**
+
+1.  **Checking for Missing Values**
+
+    ``` r
+    any(is.na(data_csv))       # TRUE if missing values exist   
+    sum(is.na(data_csv))       # Total number of missing values 
+    colSums(is.na(data_csv))   # Total Missing numbers per column
+    ```
+
+2.  **Displaying Rows with Missing Values:**
+
+    ``` r
+    missing_rows <- data_csv[!complete.cases(data_csv), ]   
+    print(missing_rows) 
+    ```
+
+**Hands-on Exercise**
+
+1.  Use a sample dataset and explore its structure using `str()` and `summary()` (choose from the data provided).
+2.  Check if there are any missing values and count them.
+
+### 4. Calculating Descriptive Statistics
+
+**Mean:** the average value of a dataset**, Median:** the middle value when data is sorted**, and Mode:** the most frequently occurring value.
+
+1.  **Mean:**
+
+    ``` r
+    mean_value <- mean(mtcars$mpg)    
+    print(mean_value)  # Output: Average of mpg
+    ```
+
+2.  **Median:**
+
+    ``` r
+    median_value <- median(mtcars$mpg)    
+    print(median_value)  # Output: Median of mpg
+    ```
+
+3.  **Mode (using custom function):**
+
+    ``` r
+    mode_function <- function(x) {      
+      unique_x <- unique(x)      
+      unique_x[which.max(tabulate(match(x, unique_x)))]  
+      }   
+
+    mode_value <- mode_function(mtcars$cyl)  
+    print(mode_value)  # Output: Mode of cyl
+    ```
+
+**Variance and Standard Deviation**
+
+1.  **Variance:** measure of data spread
+
+    ``` r
+    variance_value <- var(mtcars$mpg)   
+    print(variance_value)  # Output: Variance of mpg
+    ```
+
+2.  **Standard Deviation:** also measures data spread. it is the square root of the variance
+
+    ``` r
+    sd_value <- sd(mtcars$mpg)    
+    print(sd_value)  # Output: Standard deviation of mpg
+    ```
+
+### 5. Summarizing Data with Simple Statistics
+
+1.  **Using `summary()` for Quick Statistics**
+
+    ``` r
+    summary_stats <- summary(mtcars)    
+    print(summary_stats)
+    ```
+
+2.  **Summarizing by Group**
+
+    ``` r
+    library(dplyr)   
+
+    grouped_summary <- mtcars %>% 
+      group_by(cyl) %>% 
+      summarize(mean_mpg = mean(mpg), sd_mpg = sd(mpg))     
+
+    print(grouped_summary)
+    ```
+
+### 6. Interactive Group Activity
+
+Group Challenge:
+
+1.  Import the built-in `mtcars` dataset into R.
+2.  Explore its structure, dimensions, and column names.
+3.  Check for missing values and summarize key statistics.
+4.  Calculate the mean and median for the `hp` (horsepower) column in the `mtcars` dataset.
+5.  Compute the variance and standard deviation for the `wt` (weight) column.
+
+### 7. Assignment
+
+**1. Importing Data**\
+Download the CSV file from the link provided ([Global Population Data](https://www.kaggle.com/datasets/ankushpanday1/global-population-dataset-20142024?select=population_by_year_2014_2024.csv)). Import it into R and display the first 6 rows.
+
+***NB/ Data has been provided for you, no need to download.***
+
+**2. Exploring Data**\
+Using the imported dataset:
+
+-   Identify the structure using `str()`.
+-   Find the number of rows and columns using `dim()`.
+-   Generate summary statistics using `summary()`.
+-   Find the average (mean) global population in the year 2024 and calculate its standard deviation
+
+**3. Handling Missing Values**\
+If the dataset contains missing values:
+
+-   Count the total number of missing values.
+-   Display rows and columns with missing values.
+
+### Assignment Solutions
+
+**1. Importing Data**
+
+``` r
+# Solution   
+data <- read_csv("data/sample.csv")   
+head(data)  # Output: Displays the first 6 rows
+```
+
+**2. Exploring Data**
+
+``` r
+# Solution   
+str(data)        # Displays structure (e.g., data types, columns)   
+dim(data)        # Output: Number of rows and columns (e.g., 150, 5)   
+summary(data)    # Output: Summary statistics for each column   
+```
+
+**3. Handling Missing Values**
+
+``` r
+# Solution   
+
+# Check for missing values   
+total_na <- sum(is.na(data))   
+print(total_na)  # Output: Number of missing values (e.g., 3)    
+
+# Display rows with missing values   
+missing_rows <- data[!complete.cases(data), ]   
+print(missing_rows)  # Output: Rows with missing values 
+```
+
+### 8. Recap and Q&A
+
+-   Summarize the importance of importing and exploring data in R
+-   Highlight troubleshooting tips for common import issues
+-   Answer participant questions
+-   Preview for Week 2: **Data Manipulation and Basic Visualisation**

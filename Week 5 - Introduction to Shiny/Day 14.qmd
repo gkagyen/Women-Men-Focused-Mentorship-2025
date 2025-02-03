@@ -1,0 +1,405 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Interactive Visualizations with Shiny
+
+### Learning Objectives:
+
+-   Understand the basics of **Shiny** for interactive web applications in R
+-   Build a simple **Shiny app** with user input and dynamic visualization
+-   Enhance the Shiny app with **reactive elements** and UI customization
+
+## Session Outline
+
+### 1. Introduction to Shiny
+
+**What is Shiny?**
+
+Shiny is an **R package** that allows users to build **interactive web applications** without needing advanced web development skills.
+
+**Why Use Shiny?**
+
+-   Makes data exploration **dynamic** and **user-friendly**
+-   Can be deployed as a **web application**
+-   Supports real-time **data filtering and visualization**
+
+**Basic Structure of a Shiny App**
+
+A Shiny app consists of **two main components**:
+
+1.  **UI (User Interface):** Defines layout and input controls
+
+2.  **Server:** Contains R code that processes user input and generates output
+
+### 2. Building a Basic Shiny App
+
+**Install and Load Shiny**
+
+``` r
+install.packages("shiny")  # Install Shiny 
+library(shiny)             # Load the package 
+```
+
+#### **Create a Simple Shiny App**
+
+``` r
+library(shiny)  
+
+# Define UI 
+ui <- fluidPage(
+  
+  # Application title
+  titlePanel("Basic Shiny App"),
+  
+  # Sidebar with a slider input
+  sidebarLayout(     
+    sidebarPanel(       
+      sliderInput("num", "Choose a number:", min = 1, max = 100, value = 50)     
+      ),     
+    mainPanel(       
+      textOutput("result")    
+      )   
+    ) 
+  )  
+
+# Define Server 
+server <- function(input, output) {   
+  output$result <- renderText({     
+    paste("You selected:", input$num)   
+    }) 
+  }  
+
+# Run App 
+shinyApp(ui = ui, server = server)
+```
+
+**Explanation:**
+
+-   **`sliderInput("num")`**: Creates a slider for user input.
+
+-   **`textOutput("result")`**: Displays the selected number dynamically.
+
+-   **`renderText({})`**: Reactively updates the output.
+
+#### **Hands-on Exercise:**
+
+-   Modify the app to allow the user to input a **text message**, then display it dynamically in the main panel.
+
+### 3. Adding Interactive Visualizations
+
+**Creating a Scatter Plot with User Control**
+
+``` r
+library(shiny) 
+library(ggplot2)  
+
+# Define UI 
+ui <- fluidPage(   
+  titlePanel("Shiny Scatter Plot"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      selectInput("xvar", "Choose X-axis:", choices = names(mtcars), selected = "wt"),       
+      selectInput("yvar", "Choose Y-axis:", choices = names(mtcars), selected = "mpg")
+      ),     
+    mainPanel(       
+      plotOutput("scatterPlot")     
+      )   
+    ) 
+  )  
+
+# Define Server 
+server <- function(input, output) {   
+  output$scatterPlot <- renderPlot({     
+    ggplot(mtcars, aes(x = !!sym(input$xvar), y = !!sym(input$yvar))) +       
+      geom_point(colour = "blue", size = 3) +       
+      labs(title = paste("Scatter Plot of", input$xvar, "vs", input$yvar))   
+    }) 
+  }  
+
+# Run App 
+shinyApp(ui = ui, server = server) 
+```
+
+**Explanation**
+
+-   **`selectInput()`**: Allows users to choose variables for the x and y axes.
+
+-   **`renderPlot()`**: Dynamically updates the scatter plot based on user selections.
+
+#### **Hands-on Exercise**
+
+-   Modify the app to allow users to change the colour of the scatter plot points.
+
+### 4. Enhancing the App with Reactive Elements (30 minutes)
+
+**Adding Filters and Data Tables**
+
+``` r
+library(shiny) 
+library(DT)  
+
+# Define UI 
+ui <- fluidPage(   
+  titlePanel("Filtered Dataset Viewer"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      sliderInput("mpgFilter", "Filter by MPG:", 
+                  min = min(mtcars$mpg), 
+                  max = max(mtcars$mpg), 
+                  value = c(15, 25))     ),     
+    mainPanel(       
+      DTOutput("filteredTable")     
+      )   
+    ) 
+  )  
+
+# Define Server 
+server <- function(input, output) {   
+  output$filteredTable <- renderDT({    
+    mtcars |>        
+      filter(mpg >= input$mpgFilter[1] & mpg <= input$mpgFilter[2])   
+    }) 
+  }  
+
+# Run App 
+shinyApp(ui = ui, server = server)
+```
+
+**Explanation:**
+
+-   **`sliderInput("mpgFilter")`**: Filters dataset based on MPG values.
+-   **`renderDT()`**: Displays a dynamic, filtered table using the `DT` package.
+
+#### **Hands-on Exercise:**
+
+-   Modify the app to allow filtering by **horsepower (hp)** instead of MPG.
+
+### 4. Interactive Group Activity
+
+**Challenge: Create an Interactive Data Exploration Dashboard**
+
+In groups of 3-5, design a **Shiny dashboard** that allows users to explore a dataset interactively. The app should include:
+
+1.  **A drop down menu** to select a dataset (`iris`, `mtcars`, or `airquality`).
+2.  **A sidebar with controls** to filter the dataset (e.g., filter by MPG for `mtcars`).
+3.  **A main panel with two outputs:**
+    -   A **summary table** of the filtered dataset.
+
+    -   A **dynamic visualization** (scatter plot or histogram).
+
+**Step-by-Step Guide for Groups**
+
+**Step 1: Set Up the UI**
+
+-   Create a drop-down (`selectInput()`) to choose a dataset.
+-   Add sliders (`sliderInput()`) to filter numeric variables.
+
+**Step 2: Create the Server Logic**
+
+-   Use `reactive({})` to update the dataset based on user input.
+-   Display the filtered dataset using `DTOutput()`.
+-   Generate a dynamic plot based on user-selected variables.
+
+**Step 3: Run the App and Present**
+
+-   Each group will present their app and explain how it works.
+
+### **Group Activity Solution Example**
+
+``` r
+library(shiny) 
+library(ggplot2) 
+library(DT)  
+
+# Define UI 
+ui <- fluidPage(   
+  titlePanel("Interactive Data Explorer"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      selectInput("dataset", "Choose Dataset:", 
+                  choices = c("iris", "mtcars", "airquality")),       
+      uiOutput("varSelect"),       
+      sliderInput("filterValue", "Filter by selected variable:", 
+                  min = 0, max = 100, value = c(10, 50))     ),     
+    mainPanel(       
+      DTOutput("dataTable"),       
+      plotOutput("plot")     
+      )   
+    ) 
+  )  
+
+# Define Server 
+server <- function(input, output) {   
+  # Reactive dataset selection   
+  dataInput <- reactive({     
+    if (input$dataset == "mtcars") {       
+      mtcars     
+      } else if (input$dataset == "iris") {       
+        iris    
+        } else {       
+          airquality     
+          }   
+    })      
+  
+  # Update UI for variable selection   
+  output$varSelect <- renderUI({     
+    selectInput("var", "Choose Variable:", choices = names(dataInput()))   
+    })      
+  
+  # Reactive filtered data   
+  filteredData <- reactive({     
+    df <- dataInput()     
+    df <- df[df[[input$var]] >= input$filterValue[1] & df[[input$var]] <= input$filterValue[2], ]     
+    df   
+    })      
+  
+  # Render table   
+  output$dataTable <- renderDT({     
+    filteredData()   
+    })      
+  
+  # Render plot   
+  output$plot <- renderPlot({     
+    ggplot(filteredData(), aes(x = !!sym(input$var))) +       
+      geom_histogram(fill = "blue", colour = "black", bins = 10) +       
+      labs(title = paste("Histogram of", input$var)) +
+      theme_bw()
+    }) 
+  }  
+
+# Run App 
+shinyApp(ui = ui, server = server) 
+```
+
+### 5. Assignment
+
+**1. Modify the scatter plot app:**
+
+-   Allow users to choose the **point colour** dynamically using `selectInput()`.
+
+**2. Modify the dataset filtering app:**
+
+-   Add another **sliderInput()** to filter by `hp` (horsepower).
+
+**3. Build a custom interactive app:**
+
+-   Create a **histogram** app where users can:
+
+    -   Choose a dataset (`iris` or `mtcars`)
+
+    -   Select a numeric variable for the histogram
+
+### 6. Assignment Solutions
+
+**Solution 1: Scatter Plot with Dynamic Colour Selection**
+
+``` r
+library(shiny) 
+library(ggplot2)  
+
+ui <- fluidPage(   
+  titlePanel("Custom Scatter Plot"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      selectInput("xvar", "Choose X-axis:", choices = names(mtcars), selected = "wt"),
+      selectInput("yvar", "Choose Y-axis:", choices = names(mtcars), selected = "mpg"),
+      selectInput("colour", "Choose Color:", 
+                  choices = c("blue", "red", "green"), 
+                  selected = "blue")     ),     
+    mainPanel(       
+      plotOutput("scatterPlot")     
+      )   
+    ) 
+  ) 
+
+server <- function(input, output) {   
+  output$scatterPlot <- renderPlot({     
+    ggplot(mtcars, aes(x = !!sym(input$xvar), y = !!sym(input$yvar))) +       
+      geom_point(color = input$colour, size = 3) +       
+      labs(title = paste("Scatter Plot of", input$xvar, "vs", input$yvar))   
+    }) 
+  }  
+
+shinyApp(ui = ui, server = server)
+```
+
+**Solution 2: Filtering by Horsepower (`hp`)**
+
+``` r
+library(shiny) 
+library(DT)  
+
+ui <- fluidPage(   
+  titlePanel("Filtered Dataset Viewer"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      sliderInput("hpFilter", "Filter by HP:", 
+                  min = min(mtcars$hp), 
+                  max = max(mtcars$hp), 
+                  value = c(100, 200))     
+      ),     
+    mainPanel(       
+      DTOutput("filteredTable")     
+      )   
+    ) 
+  )  
+
+server <- function(input, output) {   
+  output$filteredTable <- renderDT({     
+    mtcars %>%       
+      filter(hp >= input$hpFilter[1] & hp <= input$hpFilter[2])   
+    }) 
+  }  
+
+shinyApp(ui = ui, server = server)
+```
+
+**Solution 3: Histogram App**
+
+``` r
+library(shiny) 
+library(ggplot2)  
+
+ui <- fluidPage(   
+  titlePanel("Interactive Histogram"),   
+  sidebarLayout(     
+    sidebarPanel(       
+      selectInput("dataset", "Choose Dataset:", choices = c("mtcars", "iris")),       
+      uiOutput("varSelect")     
+      ),     
+    mainPanel(       
+      plotOutput("histPlot")     
+      )   
+    ) 
+  )  
+
+server <- function(input, output) {   
+  dataInput <- reactive({     
+    if (input$dataset == "mtcars") {      
+      mtcars     
+      } else {      
+        iris     
+        }   
+    })    
+  output$varSelect <- renderUI({     
+    selectInput("var", "Choose Variable:", choices = names(dataInput()))   
+    })    
+  output$histPlot <- renderPlot({     
+    ggplot(dataInput(), aes(x = !!sym(input$var))) +       
+      geom_histogram(fill = "blue", colour = "black", bins = 10) +       
+      labs(title = paste("Histogram of", input$var))   
+    }) 
+  }  
+
+shinyApp(ui = ui, server = server) 
+```
+
+### 7. Recap and Q&A
+
+-   Recap **Shiny basics**, interactivity, and dynamic visualization.
+-   Address participant questions.
+-   Wrap up the entire 23-day training and discuss **next steps** for independent learning.

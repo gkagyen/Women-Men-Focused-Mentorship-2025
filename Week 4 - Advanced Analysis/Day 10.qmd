@@ -1,0 +1,244 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Time Series Analysis in R
+
+### Learning Objectives:
+
+-   Understand the basics of time series data and its components
+-   Learn how to manipulate and visualize time series data in R
+-   Perform basic time series decomposition
+-   Apply simple forecasting techniques
+
+## Session Outline
+
+### 1. Introduction to Time Series Data
+
+**What is Time Series Data?**
+
+Time series data consists of observations recorded sequentially over time (e.g., daily temperature, monthly sales, yearly population growth).
+
+**Key Components of Time Series**
+
+1.  **Trend:** Long-term upward or downward movement.
+2.  **Seasonality:** Repeating patterns over fixed intervals.
+3.  **Cyclic Patterns:** Fluctuations that are not fixed (e.g., economic cycles).
+4.  **Random Noise:** Unpredictable variations.
+
+**Examples of Time Series Data**
+
+-   Stock prices
+-   Weather data
+-   Economic indicators
+-   Sensor data
+
+### 2. Handling Time Series Data in R
+
+**Loading a Time Series Dataset**
+
+-   We will use the built-in `AirPassengers` dataset, which contains monthly airline passenger counts from 1949 to 1960.
+
+    ``` r
+    # Load dataset 
+    data("AirPassengers") 
+    class(AirPassengers)  # Check class (should be "ts") 
+    summary(AirPassengers)
+    ```
+
+**Converting a Dataset to Time Series Format**
+
+-   Creating a time series object from a raw dataset:
+
+    ``` r
+    # Create a time series object 
+    ts_data <- ts(c(120, 130, 125, 140, 135), 
+                  start = c(2020, 1), 
+                  frequency = 12) 
+
+    print(ts_data)
+    ```
+
+-   `ts()` function in R is used to create a time series object
+
+-   the `start` argument specifies the start period of the time series. `start = c(2020, 1)` means that the series starts from **Jan 2020.**
+
+-   `frequency` defines how many observations occur in one unit of time (typically a year). `12` specified for the frequency means monthly data (i.e 12 periods per year)
+
+**Exploring Time Series Data**
+
+-   Plotting a basic time series:
+
+    ``` r
+    plot(AirPassengers, 
+         main = "Air Passenger Traffic",
+         ylab = "Passengers (1000s)",
+         xlab = "Year")
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a time series object using the `nottem` dataset (monthly temperatures in Nottingham).
+-   Plot the time series.
+
+### 3. Time Series Decomposition
+
+**Decomposing Time Series into Components**
+
+``` r
+# Decompose the AirPassengers dataset
+
+decomposed <- decompose(AirPassengers) 
+plot(decomposed) 
+```
+
+**Interpreting Decomposition Output**
+
+-   **Observed:** The original data
+-   **Trend:** Underlying long-term movement
+-   **Seasonal:** Recurring seasonal patterns
+-   **Random (Residuals):** Unpredictable variations
+
+**Using `stl()` for Smoothed Decomposition**
+
+``` r
+# Decompose using STL (Seasonal-Trend-Loess) 
+stl_decomp <- stl(log(AirPassengers), 
+                  s.window = "periodic") 
+plot(stl_decomp) 
+```
+
+-   The log transformation is applied to the data to stabilise the seasonal variations
+-   the `stl()` function performs the decomposition using Locally Estimated Scatter-plot Smoothing (LOESS)
+-   `s.window = "periodic"` tells `stl()` to treat the seasonal component as periodic
+
+**Hands-on Exercise:**
+
+-   Decompose the `nottem` dataset and interpret the trend and seasonal components.
+
+### 4. Time Series Forecasting
+
+**Simple Forecasting with Moving Averages**
+
+-   A moving average smooths short-term fluctuations to reveal trends.
+
+``` r
+library(TTR) 
+
+moving_avg <- SMA(AirPassengers, n = 12)  
+
+# 12-month moving average 
+plot(AirPassengers, main = "AirPassengers with Moving Average") 
+lines(moving_avg, col = "red") 
+```
+
+**Exponential Smoothing Using Holt-Winters Method**
+
+-   A sophisticated forecasting technique best used for time series with trend and seasonality.
+-   It comes in two forms, Additive and Multiplicative.
+-   Additive is used when seasonal variations are more constant through the series
+-   Multiplicative is used the seasonal variation increases or decreases proportionally
+
+``` r
+# Apply Holt-Winters Exponential Smoothing 
+
+hw_model <- HoltWinters(AirPassengers) 
+plot(hw_model) 
+```
+
+**Using `forecast` Package for Analysis and Predictions**
+
+``` r
+library(forecast) 
+
+ts_model <- auto.arima(AirPassengers) 
+forecast_values <- forecast(ts_model, h = 12) 
+plot(forecast_values)
+```
+
+-   `auto.arima` is a function from the `forecast` package.
+-   It automatically finds the best ARIMA (Autoregressive Integrated Moving Average) model to fit the provided time series
+-   The optimal parameters `(p,d,q)` (additional (`P,D,Q)` for seasonal data) for the AR (Autoregressive), I (Integrated) and MA (Moving Average) are automatically selected based on criteria like AIC
+-   `forecast()` is another function from the `forecast` package that uses the fitted model to generate forecasts for future time periods
+-   `h = 12` specifies the forecast horizon.
+
+**Hands-on Exercise:**
+
+-   Apply the Holt-Winters method to `nottem` and generate a 12-month forecast.
+
+### **6. Interactive Group Activity (30 minutes)**
+
+**Group Challenge:**
+
+-   Use the `nottem` dataset to:
+
+    1.  Convert it into a time series object.
+
+    2.  Decompose it using `stl()`.
+
+    3.  Forecast the next 12 months using Holt-Winters.
+
+**Solution for Group Challenge:**
+
+``` r
+# 1. Convert to Time Series   
+ts_nottem <- ts(nottem, start = c(1920, 1), 
+                frequency = 12) 
+plot(ts_nottem, main = "Nottingham Monthly Temperatures")  
+
+# 2. Decomposition   
+stl_nottem <- stl(ts_nottem, s.window = "periodic") 
+plot(stl_nottem)  
+
+# 3. Forecast   
+hw_nottem <- HoltWinters(ts_nottem) 
+forecast_nottem <- forecast(hw_nottem, h = 12) 
+plot(forecast_nottem)
+```
+
+### 5. Assignment
+
+**1. Time Series Creation**
+
+-   Convert the `UKgas` dataset into a time series object and plot it.
+
+**2. Decomposition**
+
+-   Decompose the `UKgas` dataset using `stl()`.
+
+**3. Forecasting**
+
+-   Use `auto.arima()` to create a forecast for the next 12 months of `UKgas`.
+
+### Assignment Solutions
+
+**1. Convert and Plot Time Series**
+
+``` r
+ts_ukgas <- ts(UKgas, start = c(1960, 1), frequency = 4) 
+plot(ts_ukgas, main = "UK Gas Consumption", ylab = "Gas", xlab = "Year")
+```
+
+**2. Decomposition with `stl()`:**
+
+``` r
+stl_ukgas <- stl(ts_ukgas, s.window = "periodic") 
+plot(stl_ukgas)
+```
+
+**3. Forecast with `auto.arima()`:**
+
+``` r
+model_ukgas <- auto.arima(ts_ukgas) 
+forecast_ukgas <- forecast(model_ukgas, h = 12) 
+plot(forecast_ukgas)
+```
+
+### 7. Recap and Q&A
+
+-   Recap key concepts: time series decomposition, moving averages, Holt-Winters, ARIMA forecasting.
+-   Address participant questions.
+-   Preview for Day 11: **Principal Component Analysis (PCA)**.

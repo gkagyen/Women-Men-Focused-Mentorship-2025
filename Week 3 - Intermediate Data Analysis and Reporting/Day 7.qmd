@@ -1,0 +1,344 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Exploratory Data Analysis (EDA) and Hypothesis Testing
+
+### Learning Objectives:
+
+-   Understand the purpose of Exploratory Data Analysis (EDA)
+-   Perform EDA using R to uncover patterns, trends, and relationships in data
+-   Use correlation and covariance to analyse relationships between variables
+-   Visualize insights through scatter plots and correlation heat maps
+-   Understand the concept and purpose of hypothesis testing
+-   Perform common hypothesis tests in R, such as t-tests and chi-square tests
+-   Interpret the results of hypothesis tests to make data-driven decisions
+
+## Session Outline
+
+### 1. Introduction to EDA
+
+**What is EDA?**\
+EDA is the process of analysing datasets to summarize their main characteristics, often using visual methods.
+
+**Why is EDA important?**
+
+-   Helps understand data structure and identify patterns
+-   Detects outliers and anomalies
+-   Guides feature selection for modelling
+
+**EDA Process Overview:**
+
+1.  Summarize the data (e.g., descriptive statistics).
+2.  Identify relationships between variables (e.g., correlation, scatter plots).
+3.  Detect discrepancies in data.
+
+### 2. Descriptive Statistics Recap
+
+-   Use the `summary()` function to quickly summarize data:
+
+    ``` r
+    summary(mtcars)
+    ```
+
+-   Grouped summaries with `dplyr`:
+
+    ``` r
+    library(dplyr) 
+
+    grouped_summary <- mtcars %>% group_by(cyl) %>%    
+      summarize(     
+        mean_mpg = mean(mpg, na.rm = TRUE),     
+        sd_mpg = sd(mpg, na.rm = TRUE)   
+        ) 
+    print(grouped_summary) 
+    ```
+
+**Hands-on Exercise:**
+
+-   Summarize the `iris` dataset, grouping by `Species` to calculate the mean and standard deviation of `Sepal.Length`.
+
+### 3. Correlation and Covariance
+
+**What is Correlation?**
+
+Measures the strength and direction of the relationship between two variables. Correlation coefficient (`-1` to `1`):
+
+-   `-1`: Perfect negative relationship
+-   `0`: No relationship
+-   `1`: Perfect positive relationship
+
+**What is Covariance?**
+
+Measures how two variables vary together. Negative value indicates variables change differently. A positive value shows variables increase together.
+
+**Calculating Correlation and Covariance in R**
+
+1.  **Correlation**
+
+    ``` r
+    cor(mtcars$mpg, mtcars$wt) 
+    ```
+
+2.  **Covariance**
+
+    ``` r
+    cov(mtcars$mpg, mtcars$wt)
+    ```
+
+3.  **Correlation Matrix**
+
+    ``` r
+    cor_matrix <- cor(mtcars) 
+    print(cor_matrix)
+    ```
+
+**Visualizing Correlation Matrix (Heat map)**
+
+``` r
+library(ggcorrplot) 
+
+ggcorrplot(cor_matrix, hc.order = TRUE, type = "lower", lab = TRUE)
+```
+
+**Hands-on Exercise:**
+
+-   Compute the correlation between `hp` and `wt` in the `mtcars` dataset.
+
+-   Create a correlation matrix for the numeric variables in the `iris` dataset.
+
+### 4. Visualizing Relationships (Scatter Plots)
+
+-   **Scatter Plot:**
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point(color = "blue") +     
+      labs(title = "Scatter Plot of MPG vs Weight", 
+           x = "Weight", y = "Miles per Gallon") +     
+      theme_bw()
+    ```
+
+-   **Adding a Trend Line:**
+
+    ``` r
+    ggplot(mtcars, aes(x = wt, y = mpg)) +     
+      geom_point(color = "blue") +     
+      geom_smooth(method = "lm", se = TRUE, color = "red") +     
+      labs(title = "Scatter Plot with Trend Line", 
+           x = "Weight", y = "Miles per Gallon") +     
+      theme_bw()
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a scatter plot for `hp` vs `mpg` in the `mtcars` dataset, adding a trend line.
+-   Create a scatter plot for `Sepal.Length` vs `Petal.Length` in the `iris` dataset, grouped by `Species`.
+
+### 5. Introduction to Hypothesis Testing
+
+-   **What is Hypothesis Testing?**\
+    Hypothesis testing is a statistical method to evaluate assumptions about a population based on sample data.
+
+-   **Key Terms:**
+
+    -   **Null Hypothesis (H₀):** No significant difference or relationship exists.
+    -   **Alternative Hypothesis (H₁):** A significant difference or relationship exists.
+    -   **p-value:** The probability of observing the data if the null hypothesis is true.
+        -   If `p-value < 0.05`, reject H₀ (significant result).
+
+-   **Types of Hypothesis Tests:**
+
+    -   Parametric: Assume data follows a specific distribution (example, t-tests).
+
+    -   Non-parametric: No distributional assumptions (example, chi-square test).
+
+### 6. t-Test
+
+**1-Sample t-Test**
+
+-   Used to compare the mean of a sample to a known value:
+
+    ``` r
+    # Example: Is the mean mpg significantly different from 20?   
+
+    t_test_1s <- t.test(mtcars$mpg, mu = 20)   
+    print(t_test_1s) 
+    ```
+
+**2-Sample t-Test**
+
+-   Used to compare the means of two independent groups:
+
+    ``` r
+    # Example: Compare mpg between cars with 4 and 6 cylinders
+
+    t_test_2s <- t.test(mpg ~ factor(cyl), 
+                        data = mtcars, 
+                        subset = cyl %in% c(4, 6))   
+    print(t_test_2s)
+    ```
+
+**Paired t-Test**
+
+-   Used when measurements are taken on the same subject before and after a treatment:
+
+    ``` r
+    # Example: Hypothetical pre-test and post-test scores   
+    pre_test <- c(80, 85, 78, 90)   
+    post_test <- c(88, 87, 82, 95)   
+    paired_test <- t.test(pre_test, post_test, paired = TRUE)   
+
+    print(paired_test) 
+    ```
+
+**Hands-on Exercise:**
+
+-   Perform a 1-sample t-test to check if the average horsepower (`hp`) of `mtcars` is significantly different from 150.
+-   Perform a 2-sample t-test comparing `mpg` between cars with 4 and 8 cylinders.
+
+### 7. Chi-Square Test
+
+-   Used to test the association between two categorical variables.
+
+**Chi-Square Test of Independence**
+
+``` r
+# Example: Test if the distribution of cyl is independent of gear   
+chisq_table <- table(mtcars$cyl, mtcars$gear)   
+chi_test <- chisq.test(chisq_table)   
+print(chi_test)
+```
+
+**Hands-on Exercise:**
+
+-   Use the `mtcars` dataset to test if `cyl` (cylinders) is independent of `am` (transmission type).
+
+### 8. Interpreting Results
+
+**Key Interpretation Points:**
+
+-   Check the p-value:
+
+    -   `p-value < 0.05`: Reject the null hypothesis (significant result).
+
+    -   `p-value >= 0.05`: Fail to reject the null hypothesis (no significant result).
+
+-   Review confidence intervals for additional insights.
+
+### 6. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Use the `iris` dataset and:
+
+    1.  Compute the correlation matrix for all numeric variables.
+
+    2.  Visualize the matrix using `ggcorrplot`.
+
+    3.  Create a scatter plot of `Sepal.Width` vs `Petal.Width`, grouped by `Species`.
+
+    4.  Perform 1 sample t-test to check if the average `Petal.Length` is significantly different from 4
+
+    5.  Perform a 2 sample t-test to check if the average Petal.Length of `virginica` is significantly different from `Setosa`
+
+**Solutions for Group Challenge:**
+
+``` r
+# 1. Correlation Matrix   
+cor_matrix_iris <- cor(iris[, 1:4]) print(cor_matrix_iris)  
+
+# 2. Heatmap   
+ggcorrplot(cor_matrix_iris, hc.order = TRUE, type = "lower", lab = TRUE)  
+
+# 3. Scatter Plot   
+ggplot(iris, aes(x = Sepal.Width, y = Petal.Width, color = Species)) +
+  geom_point(size = 3) +     
+  labs(title = "Scatter Plot of Sepal Width vs Petal Width",          
+       x = "Sepal Width", y = "Petal Width") +     
+  theme_minimal() 
+
+# 4 1-sample t-test
+t1_petal.length <- t.test(iris$Petal.Length, mu=4)
+print(t1_petal.length)
+
+# 5 2-sample t-test
+t2_PL_Species <- t.test(Petal.Length ~ Species, data = iris,
+                        subset = Species %in% c('setosa', 'virginica'))
+print(t2_PL_Species)
+```
+
+### 9. Assignment
+
+**Correlation Analysis:**
+
+-   Compute the correlation matrix for the `mtcars` dataset and identify the strongest positive and negative relationships.
+
+**Visualise Correlation Plot:**
+
+-   Create a scatter plot for `hp` vs `wt` with a trend line.
+-   Visualize the correlation matrix of the `mtcars` dataset using `ggcorrplot`.
+
+**t-Test:**
+
+-   Test if the average `wt` in the `mtcars` dataset is significantly different from 3.
+-   Compare `hp` between cars with automatic (`am = 0`) and manual (`am = 1`) transmissions.
+
+**Chi-Square Test:**
+
+-   Use the `iris` dataset to test if `Species` and a discretized version of `Sepal.Length` (e.g., greater or less than the median) are independent
+
+### Assignment Solutions
+
+**1. Correlation Analysis:**
+
+``` r
+cor_matrix <- cor(mtcars)  
+print(cor_matrix) # Strongest positive relationship: disp vs wt # Strongest negative relationship: mpg vs wt 
+```
+
+**2. Scatter Plot with Trend Line:**
+
+``` r
+ggplot(mtcars, aes(x = hp, y = wt)) +        
+  geom_point(color = "blue") +        
+  geom_smooth(method = "lm", se = TRUE, color = "red") +        
+  labs(title = "Scatter Plot of HP vs Weight", x = "Horsepower", y = "Weight") +  
+  theme_classic()  
+
+ggcorrplot(cor_matrix,             
+           hc.order = TRUE,             
+           type = "lower",             
+           lab = TRUE) 
+```
+
+**3. t-Test:**
+
+``` r
+t_test_1s_wt <- t.test(mtcars$wt, mu = 3)   
+print(t_test_1s_wt)   # Output: Check p-value to determine significance    
+
+t_test_2s_hp <- t.test(hp ~ am, data = mtcars)   
+print(t_test_2s_hp)   # Output: Compare p-value and means for interpretation   
+```
+
+**4. Chi-Square**
+
+``` r
+# Create a discretized version of Sepal.Length   
+iris$Sepal.Length.Discrete <- ifelse(iris$Sepal.Length > median(iris$Sepal.Length), "High", "Low")    
+
+# Create contingency table and perform chi-square test   
+iris_table <- table(iris$Species, iris$Sepal.Length.Discrete)   
+iris_chi_test <- chisq.test(iris_table)   
+print(iris_chi_test)   # Output: Check p-value for independence   
+```
+
+### 7. Recap and Q&A
+
+-   Recap EDA steps: summarizing data, analysing relationships, and visualizing insights
+-   Address participant questions and challenges
+-   Preview for Day 8: **Regression Analysis**

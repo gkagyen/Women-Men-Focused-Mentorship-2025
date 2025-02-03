@@ -1,0 +1,307 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Data Structures in R – Vectors, Matrices, Lists, Data Frames, and Tibbles
+
+### Learning Objectives
+
+-   Understand and work with core data structures in R
+-   Create and manipulate vectors, matrices, lists, data frames, and tibbles
+-   Perform operations on these data structures
+
+## Session Outline
+
+### 1. Review of Day 2
+
+-   Quick recap of variables, data types, and operations
+-   Participants share experiences with Day 2 exercises
+-   Overview of today’s focus on R data structures
+
+### 2. Vectors in R
+
+Vectors are one-dimensional arrays that store elements of the same type.
+
+**Creating Vectors**
+
+1.  Numeric Vector
+
+    ``` r
+    num_vector <- c(1, 2, 3, 4, 5)   
+    print(num_vector)  
+    ```
+
+2.  Character Vector
+
+    ``` r
+    char_vector <- c("apple", "banana", "cherry")   
+    print(char_vector)
+    ```
+
+3.  Logical Vector:
+
+    ``` r
+    bool_vector <- c(TRUE, FALSE, TRUE)   print(bool_vector) 
+    ```
+
+**Operations on Vectors**
+
+-   Element-wise addition
+
+    ``` r
+    num_vector + 2
+    ```
+
+-   Sub setting elements:
+
+    ``` r
+    num_vector[2]  # Access the second element   
+    num_vector[c(1, 3)]  # Access the first and third elements 
+    ```
+
+**Hands-on Exercise**
+
+-   Create a vector of your top three favourite numbers.
+
+-   Multiply all elements in the vector by 10.
+
+**Solution**
+
+``` r
+top_numbers <- c(10, 20, 100)
+top_numbers * 10
+```
+
+### 3. Matrices in R
+
+Matrices are two-dimensional arrays with elements of the same type.
+
+**Creating a Matrix**
+
+``` r
+matrix_1 <- matrix(1:6, nrow = 2, ncol = 3)   
+print(matrix_1)
+```
+
+**Matrix Operations**
+
+1.  Transposing a Matrix
+
+    ``` r
+    t(matrix_1) 
+    ```
+
+2.  Element-wise Multiplication
+
+    ``` r
+    matrix_1 * 2
+    ```
+
+**Hands-on Exercise**
+
+-   Create a 3x3 matrix filled with numbers from first 1 to 9
+-   Transpose the matrix and display the result.
+
+**Solution**
+
+``` r
+matrix_3.3 <- matrix(1:9, nrow = 3)
+t(matrix_3.3)
+```
+
+### 4. Lists in R
+
+Lists can store elements of different types (numeric, character, logical, etc.).
+
+**Creating a List:**
+
+``` r
+my_list <- list(1:5, "Hello", TRUE, 3.14)   
+print(my_list) 
+```
+
+**Accessing List Elements**
+
+1.  Using double brackets to access elements:
+
+    ``` r
+    my_list[[2]]  # Output: "Hello" 
+    ```
+
+2.  Assigning names to list elements
+
+    ``` r
+    named_list <- list(numbers = 1:5, 
+      text = "Welcome", 
+      flag = FALSE)   
+    named_list$text  # Output: "Welcome" 
+    ```
+
+**Hands-on Exercise:**
+
+-   Create a list with your name, age, and a Boolean indicating whether you like programming.
+-   Access the element containing your name.
+
+**Solution**
+
+``` r
+my_list <- list(
+  name = 'John Doe',
+  age = 22,
+  like_programming = TRUE
+)
+my_list$name 
+```
+
+### 5. Data Frames and Tibbles
+
+Data frames are table-like structures with rows and columns where columns can store different types of data.\
+Tibbles are modern versions of data frames that print better and handle data more cleanly.
+
+**Creating a Data Frame:**
+
+``` r
+my_data <- data.frame(  
+  Name = c("George", "Samuel", "Ebben"),  
+  Age = c(25, 30, 35),  
+  Score = c(85, 90, 95)  
+)  
+print(my_data)  
+```
+
+**Sub-setting Data Frames:**
+
+1.  Accessing a column:
+
+    ``` r
+    my_data$Name 
+    ```
+
+2.  Accessing a specific element:
+
+    ``` r
+    my_data[2, 3]  # Second row, third column 
+    ```
+
+**Creating a Tibble:**
+
+``` r
+library(tibble)  
+my_tibble <- tibble(  
+  Name = c("George", "Samuel", "Ebben"),  
+  Age = c(25, 30, 35),  
+  Score = c(85, 90, 95)  
+)  
+print(my_tibble)  
+```
+
+**Hands-on Exercise:**
+
+-   Create a data frame containing three of your favourite movies, the year they were released, and your rating out of 10.
+-   Extract the ratings column.
+
+**Solution**
+
+``` r
+favourite_movies <- data.frame(
+  movie_name = c('Django Unchained','Bourne Identity','Kingsman'),
+  release_year = c('2012', '2002', '2014'),
+  my_rating = c(8.0, 9.5, 9.0)
+)
+favourite_movies$my_rating
+```
+
+### 6. Interactive Group Activity
+
+-   Group Challenge:
+
+    1.  Create a vector containing numbers from 1 to 10.
+
+    2.  Create a matrix using the first 9 elements of the vector.
+
+    3.  Create a data frame using columns for names, ages, and favourite colours.
+
+### 7. Assignment
+
+**1. Vectors:**\
+Create a vector with the names of three cities you want to visit. Retrieve the second city in the vector.
+
+**2. Matrices:**\
+Create a 2x4 matrix with values from 1 to 8. Multiply all elements by 3.
+
+**3. Lists:**\
+Create a list containing your name, age, and a logical value indicating whether you are enjoying the training. Retrieve the logical value.
+
+**4. Data Frames:**\
+Create a data frame with columns for three fruits, their colours, and their prices per kilogram. Retrieve the row for the second fruit.
+
+### Assignment Solutions
+
+**1. Vectors**
+
+Create a vector with the names of three cities you want to visit. Retrieve the second city in the vector:
+
+``` r
+# Solution   
+cities <- c("Paris", "Tokyo", "Amsterdam")   
+second_city <- cities[2]   
+print(second_city)  # Output: "Tokyo"   
+```
+
+**2. Matrices**
+
+Create a 2x4 matrix with values from 1 to 8. Multiply all elements by 3:
+
+``` r
+# Solution   
+matrix_2x4 <- matrix(1:8, nrow = 2, ncol = 4)   
+scaled_matrix <- matrix_2x4 * 3   
+print(scaled_matrix)    
+
+# Output:  
+#      [,1] [,2] [,3] [,4]   
+# [1,]    3    9   15   21   
+# [2,]    6   12   18   24   
+```
+
+**3. Lists**
+
+Create a list containing your name, age, and a logical value indicating whether you are enjoying the training. Retrieve the logical value:
+
+``` r
+# Solution   
+my_list <- list(name = "Jane Doe", 
+                age = 28, 
+                enjoying_training = TRUE)  
+training_status <- my_list$enjoying_training
+print(training_status)  # Output: TRUE   
+```
+
+**4. Data Frames**
+
+Create a data frame with columns for three fruits, their colours, and their prices per kilogram. Retrieve the row for the second fruit:
+
+``` r
+# Solution   
+fruits_df <- data.frame(     
+  Fruit = c("Apple", "Banana", "Cherry"),     
+  Color = c("Red", "Yellow", "Red"),     
+  Price_per_kg = c(3.50, 2.00, 7.00)   
+)   
+second_fruit <- fruits_df[2, ]   
+print(second_fruit)    
+
+# Output:   
+#    Fruit   Color Price_per_kg   
+# 2 Banana Yellow          2 
+```
+
+### 8. Recap and Q&A
+
+-   Summarize today’s key points on R data structures
+-   Discuss practical applications of these data structures
+-   Answer participant questions
+-   Provide a preview for Day 3: **Importing and Exploring Data**

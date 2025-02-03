@@ -1,0 +1,283 @@
+---
+title: "Women/Men Focused Training"
+author: "Ghana R-Users Trainers"
+format: html
+editor: visual
+---
+
+## Regression Analysis – Simple and Multiple Linear Regression
+
+### Learning Objectives:
+
+-   Understand the purpose and assumptions of linear regression
+-   Perform simple linear regression in R to explore the relationship between two variables
+-   Extend to multiple linear regression with multiple predictors
+-   Interpret regression outputs to make data-driven decisions
+
+### Session Outline
+
+### 1. Introduction to Regression Analysis
+
+**What is Regression Analysis?**\
+Regression analysis is a statistical method used to model and analyse relationships between a dependent variable (response) and one or more independent variables (predictors).
+
+**Types of Regression:**
+
+-   **Simple Linear Regression:** One predictor variable
+-   **Multiple Linear Regression:** Multiple predictor variables
+
+**Why Use Regression?**
+
+-   To predict outcomes based on input variables
+-   To quantify the strength and direction of relationships
+
+### 2. Simple Linear Regression
+
+**Model Description:**
+
+The formula for simple linear regression:\
+$$y = \beta_{0}+\beta_{1}x+\varepsilon$$ Where:
+
+-   $y$: Dependent variable (response)
+-   $x$: Independent variable (predictor)
+-   $\beta_{0}$: Intercept
+-   $\beta_{1}$: Slope
+-   $\varepsilon$: Error term
+
+**Steps in R:**
+
+**Fit the Model**
+
+-   Example: Predict `mpg` based on `wt` in the `mtcars` dataset:
+
+    ``` r
+    model_simple <- lm(mpg ~ wt, data = mtcars)   
+    summary(model_simple)
+    ```
+
+**Interpret the Output**
+
+**Coefficients:**
+
+-   Intercept $\beta_{0}$ : Predicted value of `mpg` when `wt = 0`
+-   Slope $\beta_{1}$: Change in `mpg` for a one-unit increase in `wt`
+
+**Residual Standard Error (RSE):** How well the model fits the data
+
+**R-squared:** Proportion of variance in `mpg` explained by `wt`
+
+**Visualizing the Regression Line**
+
+``` r
+ggplot(mtcars, aes(x = wt, y = mpg)) +     
+  geom_point() +     
+  geom_smooth(method = "lm", color = "red", se = TRUE) +     
+  labs(title = "Simple Linear Regression: MPG vs Weight", x = "Weight", y = "MPG") +
+  theme_bw()
+```
+
+**Hands-on Exercise:**
+
+-   Fit a simple linear regression model to predict `hp` based on `wt` in the `mtcars` dataset.
+-   Visualize the regression line using `ggplot2`.
+
+### 3. Multiple Linear Regression
+
+**Model Description**
+
+The formula for multiple linear regression:\
+$$y = \beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+\cdots+\beta_{n}x_{n}+\varepsilon$$
+
+**Steps in R:**
+
+**Fit the Model**
+
+-   Example: Predict `mpg` based on `wt`, `hp`, and `cyl` in the `mtcars` dataset:
+
+    ``` r
+    model_multiple <- lm(mpg ~ wt + hp + cyl, data = mtcars)   
+    summary(model_multiple)
+    ```
+
+**Interpret the Output:**
+
+-   **Coefficients:** Each coefficient represents the effect of one predictor on the response, holding other predictors constant.
+-   **Adjusted R-squared:** Adjusts for the number of predictors in the model.
+
+**Hands-on Exercise:**
+
+-   Fit a multiple linear regression model to predict `mpg` based on `wt`, `hp`, and `disp`.
+-   Interpret the coefficients
+
+### **4. Check Model Assumptions to Assess Models Accuracy**
+
+Use diagnostic plots to check assumptions (e.g., linearity, homoscedasticity):
+
+**Linearity Check: Residuals vs Fitted Values**
+
+-   Residuals should be randomly scattered around zero with no discernible pattern
+
+``` r
+# Extract residuals and fitted values
+mtcars$Residuals <- resid(model_multiple)  # Residuals
+mtcars$Fitted <- fitted(model_multiple)    # Predicted values
+
+ggplot(mtcars, aes(x = Fitted, y = Residuals)) +  
+  geom_point(color = "blue") +   
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +   
+  labs(title = "Residuals vs Fitted Values",        
+       x = "Fitted Values",        
+       y = "Residuals") +   
+  theme_bw()
+```
+
+-   **Interpretation:**
+
+    -   If residuals are randomly scattered around zero, the linearity assumption holds.
+
+    -   Any clear pattern (e.g., a curve) suggests a violation of linearity
+
+**Constant Variance (Homoscedasticity) Check: Scale-Location Plot**
+
+-   Residuals should have constant variance across all fitted values.
+
+``` r
+ggplot(mtcars, aes(x = Fitted, y = sqrt(abs(Residuals)))) +   
+  geom_point(color = "blue") +   
+  geom_smooth(method = "loess", color = "red", se = FALSE) +   
+  labs(title = "Scale-Location Plot",        
+       x = "Fitted Values",        
+       y = "Square Root of |Residuals|") +   
+  theme_minimal()
+```
+
+-   **Interpretation:**
+
+    -   The red line (trend line) should be relatively flat.
+
+    -   A clear upward or downward trend indicates heteroscedasticity (non-constant variance).
+
+**Normality of Residuals: Q-Q Plot**
+
+-   Residuals should follow a normal distribution.
+
+``` r
+ggplot(mtcars, aes(sample = Residuals)) +   
+  stat_qq(color = "blue") +   
+  stat_qq_line(color = "red") +   
+  labs(title = "Normal Q-Q Plot",        
+       x = "Theoretical Quantiles",        
+       y = "Sample Quantiles") +   
+  theme_bw()
+```
+
+-   **Interpretation:**
+
+    -   If the residuals fall approximately along the red line, the normality assumption holds.
+
+    -   Significant deviations suggest non-normality
+
+**Outliers and Leverage: Cook’s Distance Plot**
+
+-   Identify influential observations that might disproportionately impact the model.
+
+``` r
+# Calculate Cook's distance 
+mtcars$CooksD <- cooks.distance(model_multiple)  
+
+ggplot(mtcars, aes(x = seq_along(CooksD), y = CooksD)) +   
+  geom_bar(stat = "identity", fill = "blue") +   
+  labs(title = "Cook's Distance",        
+       x = "Observation Index",        
+       y = "Cook's Distance") +   
+  theme_bw() 
+```
+
+-   **Interpretation:**
+
+    -   Observations with a Cook's distance \> 0.5 (or significantly higher than others) may be influential.
+
+### 5. Interactive Group Activity
+
+**Group Challenge:**
+
+-   Use the `mtcars` dataset and:
+
+    1.  Fit a simple linear regression model predicting `hp` based on `wt`.
+
+    2.  Fit a multiple linear regression model predicting `mpg` based on `wt`, `hp`, and `gear`.
+
+    3.  Visualize the simple regression model and interpret the outputs for both models.
+
+**Solutions for Group Challenge:**
+
+``` r
+# 1. Simple Linear Regression   
+model_simple_group <- lm(hp ~ wt, data = mtcars)   
+summary(model_simple_group)    
+
+# 2. Multiple Linear Regression   
+model_multiple_group <- lm(mpg ~ wt + hp + gear, data = mtcars)   
+summary(model_multiple_group)    
+
+# 3. Visualization for Simple Regression   .
+ggplot(mtcars, aes(x = wt, y = hp)) +     
+  geom_point() +     
+  geom_smooth(method = "lm", color = "green") +     
+  labs(title = "Simple Linear Regression: HP vs Weight",          
+       x = "Weight", y = "Horsepower") +     
+  theme_bw()
+```
+
+### 4. Assignment
+
+**1. Simple Linear Regression:**
+
+-   Fit a model to predict `Sepal.Length` based on `Petal.Length` in the `iris` dataset.
+-   Visualize the regression line with `ggplot2`.
+
+**2. Multiple Linear Regression:**
+
+-   Use the `iris` dataset to predict `Sepal.Length` based on `Petal.Length`, `Sepal.Width`, and `Petal.Width`.
+-   Check the significance of each predictor and interpret the results.
+-   Asses models accuracy with diagnostic plots
+
+### **Assignment Solutions**
+
+**1. Simple Linear Regression:**
+
+``` r
+# Fit the model   
+model_simple_iris <- lm(Sepal.Length ~ Petal.Length, data = iris)   
+summary(model_simple_iris)    
+
+# Visualize the regression line   
+ggplot(iris, aes(x = Petal.Length, y = Sepal.Length)) +     
+  geom_point() +     
+  geom_smooth(method = "lm", color = "blue") +     
+  labs(title = "Simple Linear Regression: Sepal.Length vs Petal.Length",          
+       x = "Petal Length", y = "Sepal Length") +     
+  theme_bw()
+```
+
+**2. Multiple Linear Regression:**
+
+``` r
+# Fit the model   
+model_multiple_iris <- lm(Sepal.Length ~ Petal.Length + Sepal.Width + Petal.Width, data = iris)   
+summary(model_multiple_iris)    
+
+# Output Interpretation:   
+# - Coefficients indicate the contribution of each predictor to Sepal.Length   
+# - Check significance levels (p-values) to identify important predictors    
+
+# Diagnostic plots   
+par(mfrow = c(2, 2))   
+plot(model_multiple_iris)
+```
+
+### 6. Recap and Q&A
+
+-   Recap key concepts: simple and multiple linear regression, interpreting coefficients, and diagnostic plots
+-   Address participant questions and challenges
+-   Preview for Day 9: **Data Reporting with Quarto**
